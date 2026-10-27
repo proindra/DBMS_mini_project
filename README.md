@@ -15,6 +15,15 @@ in later phases described in [IMPLEMENTATION.md](./IMPLEMENTATION.md).
 ```powershell
 npm install
 Copy-Item .env.example .env.local
+
+# Start PostgreSQL with pgvector if Docker is available
+# Docker Desktop must be running for this step.
+docker compose up -d
+
+# Apply the Prisma schema and seed demo data
+npm run db:migrate
+npm run db:seed
+
 npm run dev
 ```
 
