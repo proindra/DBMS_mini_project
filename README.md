@@ -39,12 +39,22 @@ After running the seed command, use these local-only demo accounts:
 Registration always creates a `CUSTOMER`; admin accounts are provisioned by
 the seed script. Replace the example `AUTH_SECRET` before deploying.
 
+## Store workflows
+
+- Browse and filter active products at `/products`.
+- Add products to your cart and place an order. Checkout computes totals from
+  current database prices; payment remains simulated.
+- View your own orders at `/orders`.
+- Admins can add/edit/deactivate products, update stock, and manage order
+  statuses at `/admin`.
+
 ## Checks
 
 ```powershell
 npm run lint
 npm run typecheck
 npm run test:auth
+npm run test:workflows
 npm run build
 ```
 

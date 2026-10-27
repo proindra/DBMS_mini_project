@@ -11,15 +11,21 @@ export default function Home() {
           E-commerce Order Management
         </h1>
         <p className="max-w-2xl text-lg leading-8 text-zinc-600">
-          Secure customer accounts and role-based admin access are ready.
-          Product browsing, carts, and order workflows are coming next.
+          Browse products, manage your cart, and place orders with secure
+          customer accounts and role-based admin access.
         </p>
       </div>
 
       <div className="flex flex-wrap gap-3">
         <Link
-          href="/login"
+          href="/products"
           className="rounded-lg bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
+        >
+          Browse products
+        </Link>
+        <Link
+          href="/login"
+          className="rounded-lg border border-zinc-300 px-5 py-3 font-semibold text-zinc-800 hover:bg-zinc-50"
         >
           Sign in
         </Link>
@@ -32,13 +38,13 @@ export default function Home() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        {["Products", "Orders", "Semantic search"].map((feature) => (
+        {["Product catalogue", "Cart and checkout", "Order history"].map((feature) => (
           <div
             key={feature}
             className="rounded-xl border border-zinc-200 bg-white p-5"
           >
             <h2 className="font-medium text-zinc-900">{feature}</h2>
-            <p className="mt-2 text-sm text-zinc-600">Planned project feature</p>
+            <p className="mt-2 text-sm text-zinc-600">Ready to explore</p>
           </div>
         ))}
       </div>

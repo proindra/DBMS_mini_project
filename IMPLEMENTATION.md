@@ -175,6 +175,15 @@ and authorization tests are in `src/lib/auth/`.
 **Checkpoint:** browse → add to cart → place order → view order works;
 failures do not leave partial updates.
 
+**Status:** Implemented with searchable/filterable product browsing, product
+details, admin product creation/edit/deactivation and stock updates, customer
+cart management, transactional checkout, simulated pending payments, customer
+order history, and admin order status management. Checkout calculates totals
+from current database prices, conditionally decrements stock in a serializable
+transaction, snapshots purchased names/prices, creates the payment record, and
+clears the cart atomically. Database checks protect non-negative stock/money
+and positive quantities.
+
 ### Phase 5 --- Vector semantic search
 
 -   Choose a local or approved embedding model and confirm its vector
