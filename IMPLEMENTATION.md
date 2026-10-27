@@ -155,6 +155,12 @@ constraints are verified.
 
 **Checkpoint:** test customer/admin access and unauthorized requests.
 
+**Status:** Implemented with Auth.js credentials sessions. Registration
+creates customer accounts only; the database role is read again for each
+protected request. Customer cart and order reads are scoped to the signed-in
+user, and admin-only routes check the role on the server. Focused validation
+and authorization tests are in `src/lib/auth/`.
+
 ### Phase 4 --- Product and order workflows
 
 -   Implement product listing, details, filters, and admin product
