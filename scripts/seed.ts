@@ -1,27 +1,24 @@
-import { PrismaClient } from "@prisma/client";
+import "dotenv/config";
 import bcrypt from "bcryptjs";
-
-const prisma = new PrismaClient();
+import { prisma } from "../src/lib/db";
 
 async function main() {
   await prisma.$transaction(async (tx) => {
-    await tx.orderItem.deleteMany();
-    await tx.payment.deleteMany();
-    await tx.order.deleteMany();
-    await tx.cartItem.deleteMany();
-    await tx.productEmbedding.deleteMany();
-    await tx.product.deleteMany();
-    await tx.category.deleteMany();
-    await tx.user.deleteMany();
-
-    const categories = await tx.category.createManyAndReturn({
-      data: [
-        { name: "Audio", description: "Headphones, speakers, and sound accessories." },
-        { name: "Accessories", description: "Desk, lighting, and daily-use essentials." },
-        { name: "Home Office", description: "Products built for efficient workspaces." },
-        { name: "Gaming", description: "Performance gear and entertainment tools." },
-      ],
-    });
+    const categoryData = [
+      { name: "Audio", description: "Headphones, speakers, and sound accessories." },
+      { name: "Accessories", description: "Desk, lighting, and daily-use essentials." },
+      { name: "Home Office", description: "Products built for efficient workspaces." },
+      { name: "Gaming", description: "Performance gear and entertainment tools." },
+    ];
+    const categories = await Promise.all(
+      categoryData.map((category) =>
+        tx.category.upsert({
+          where: { name: category.name },
+          create: category,
+          update: { description: category.description },
+        }),
+      ),
+    );
 
     const categoryMap = new Map(categories.map((category) => [category.name, category.id]));
 
@@ -82,9 +79,14 @@ async function main() {
       },
     ];
 
-    await tx.product.createMany({
-      data: products.map((product) => ({
-        categoryId: categoryMap.get(product.categoryName) ?? 1,
+    for (const product of products) {
+      const categoryId = categoryMap.get(product.categoryName);
+      if (!categoryId) {
+        throw new Error(`Unknown category for seeded product "${product.name}".`);
+      }
+
+      const productData = {
+        categoryId,
         name: product.name,
         slug: product.slug,
         description: product.description,
@@ -92,18 +94,30 @@ async function main() {
         price: product.price,
         stock: product.stock,
         active: true,
-      })),
-    });
+      };
+
+      await tx.product.upsert({
+        where: { slug: product.slug },
+        create: productData,
+        update: productData,
+      });
+    }
 
     const passwordHash = await bcrypt.hash("password123", 10);
 
-    await tx.user.createMany({
-      data: [
+    const users = [
         { name: "Alice Customer", email: "alice@example.com", passwordHash, role: "CUSTOMER" },
         { name: "Bob Admin", email: "bob@example.com", passwordHash, role: "ADMIN" },
         { name: "Charlie Customer", email: "charlie@example.com", passwordHash, role: "CUSTOMER" },
-      ],
-    });
+    ] as const;
+
+    for (const user of users) {
+      await tx.user.upsert({
+        where: { email: user.email },
+        create: user,
+        update: { name: user.name, passwordHash, role: user.role },
+      });
+    }
   });
 
   console.log("Database seed complete.");
