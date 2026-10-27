@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center gap-8 px-6 py-24 sm:px-10">
@@ -9,10 +11,24 @@ export default function Home() {
           E-commerce Order Management
         </h1>
         <p className="max-w-2xl text-lg leading-8 text-zinc-600">
-          The Next.js foundation is ready. Product browsing, customer orders,
-          admin tools, PostgreSQL, and semantic search will be added phase by
-          phase.
+          Secure customer accounts and role-based admin access are ready.
+          Product browsing, carts, and order workflows are coming next.
         </p>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <Link
+          href="/login"
+          className="rounded-lg bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800"
+        >
+          Sign in
+        </Link>
+        <Link
+          href="/register"
+          className="rounded-lg border border-zinc-300 px-5 py-3 font-semibold text-zinc-800 hover:bg-zinc-50"
+        >
+          Create customer account
+        </Link>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
