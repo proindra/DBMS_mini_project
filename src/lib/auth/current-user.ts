@@ -1,8 +1,10 @@
 import { getServerSession } from "next-auth";
+import { connection } from "next/server";
 import { authOptions } from "@/lib/auth/options";
 import { prisma } from "@/lib/db";
 
 export async function getCurrentUser() {
+  await connection();
   const session = await getServerSession(authOptions);
   const userId = Number(session?.user?.id);
 
