@@ -11,6 +11,7 @@
   <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
   <img alt="Database: PostgreSQL 16 with pgvector" src="https://img.shields.io/badge/Database-PostgreSQL_16_%2B_pgvector-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
   <img alt="Prisma" src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" />
+  <img alt="Container: Docker" src="https://img.shields.io/badge/Container-Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
 </p>
 
 <p><strong>A full-stack DBMS mini-project for product discovery, secure checkout, and order management.</strong></p>
@@ -91,6 +92,26 @@ vector indexes, an `AdminSalesSummary` PostgreSQL view, and pgvector cosine
 search. Safe SQL examples for the database assignment are in
 [`docs/important-queries.sql`](./docs/important-queries.sql); database
 verification steps are in [`docs/testing.md`](./docs/testing.md).
+
+## Project structure
+
+```text
+.
+├── docs/                 # Requirements, database design, SQL examples, tests
+├── prisma/
+│   ├── schema.prisma     # Relational schema and models
+│   └── migrations/       # PostgreSQL and pgvector migrations
+├── public/               # Static assets
+├── scripts/              # Seed data and product embedding indexing
+├── src/
+│   ├── app/              # Next.js pages, layouts, and API route handlers
+│   ├── components/       # Reusable UI for auth, products, cart, and admin
+│   ├── lib/              # Database, auth, workflow, and search services
+│   └── types/            # Shared TypeScript declarations
+├── docker-compose.yml    # Local PostgreSQL + pgvector service
+├── prisma.config.ts      # Prisma CLI configuration
+└── package.json          # Scripts and project dependencies
+```
 
 Project scope and implementation status are tracked in
 [`IMPLEMENTATION.md`](./IMPLEMENTATION.md).
