@@ -8,6 +8,10 @@ import {
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/db";
 import { productInputSchema } from "@/lib/products/validation";
+import {
+  createProductVector,
+  storeProductVector,
+} from "@/lib/vector-search/service";
 
 async function requireAdminResponse() {
   try {
@@ -55,10 +59,28 @@ export async function POST(request: Request) {
     );
   }
 
+  const category = await prisma.category.findUnique({
+    where: { id: parsed.data.categoryId },
+    select: { name: true },
+  });
+  if (!category) {
+    return NextResponse.json({ error: "Choose an existing category." }, { status: 400 });
+  }
+
+  const embedding = await createProductVector({
+    name: parsed.data.name,
+    description: parsed.data.description,
+    category,
+  });
+
   try {
-    const product = await prisma.product.create({
-      data: parsed.data,
-      include: { category: { select: { id: true, name: true } } },
+    const product = await prisma.$transaction(async (tx) => {
+      const created = await tx.product.create({
+        data: parsed.data,
+        include: { category: { select: { id: true, name: true } } },
+      });
+      await storeProductVector(tx, created.id, embedding);
+      return created;
     });
     return NextResponse.json({ product }, { status: 201 });
   } catch (error) {

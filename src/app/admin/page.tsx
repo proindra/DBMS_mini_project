@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { OrderManager, type AdminOrderView } from "@/components/admin/order-manager";
 import { ProductManager, type AdminProductView } from "@/components/admin/product-manager";
+import { getAdminSummary } from "@/lib/admin/summary";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/db";
 
@@ -24,7 +25,7 @@ async function AdminContent() {
     redirect("/account");
   }
 
-  const [products, categories, orders, usersCount] = await Promise.all([
+  const [products, categories, orders, summary] = await Promise.all([
     prisma.product.findMany({
       include: { category: { select: { id: true, name: true } } },
       orderBy: { createdAt: "desc" },
@@ -34,7 +35,7 @@ async function AdminContent() {
       include: { user: { select: { name: true, email: true } } },
       orderBy: { createdAt: "desc" },
     }),
-    prisma.user.count(),
+    getAdminSummary(),
   ]);
   const productViews: AdminProductView[] = products.map((product) => ({
     id: product.id,
@@ -55,10 +56,6 @@ async function AdminContent() {
     createdAt: order.createdAt.toISOString(),
     user: order.user,
   }));
-  const salesTotal = orders
-    .filter((order) => order.status !== "CANCELLED")
-    .reduce((total, order) => total + Number(order.total), 0);
-
   return (
     <main className="mx-auto min-h-screen w-full max-w-6xl px-6 py-12">
       <Link href="/account" className="text-sm font-semibold text-blue-700">
@@ -72,9 +69,9 @@ async function AdminContent() {
       <SignOutButton />
       <section className="mt-8 grid gap-4 sm:grid-cols-3">
         <SummaryCard label="Products" value={products.length} />
-        <SummaryCard label="Orders" value={orders.length} />
-        <SummaryCard label="Order total (excluding cancelled)" value={`$${salesTotal.toFixed(2)}`} />
-        <SummaryCard label="Registered users" value={usersCount} />
+        <SummaryCard label="Orders" value={summary.orders} />
+        <SummaryCard label="Order total (excluding cancelled)" value={`$${Number(summary.salesTotal).toFixed(2)}`} />
+        <SummaryCard label="Registered users" value={summary.users} />
       </section>
       <ProductManager initialProducts={productViews} categories={categories} />
       <OrderManager initialOrders={orderViews} />

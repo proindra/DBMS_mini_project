@@ -8,6 +8,10 @@ import {
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/db";
 import { productPatchSchema } from "@/lib/products/validation";
+import {
+  createProductVector,
+  storeProductVector,
+} from "@/lib/vector-search/service";
 
 export async function PATCH(
   request: Request,
@@ -41,11 +45,41 @@ export async function PATCH(
     );
   }
 
+  const existing = await prisma.product.findUnique({
+    where: { id },
+    include: { category: { select: { name: true } } },
+  });
+  if (!existing) {
+    return NextResponse.json({ error: "Product not found." }, { status: 404 });
+  }
+
+  const categoryId = parsed.data.categoryId ?? existing.categoryId;
+  const category =
+    categoryId === existing.categoryId
+      ? existing.category
+      : await prisma.category.findUnique({
+          where: { id: categoryId },
+          select: { name: true },
+        });
+  if (!category) {
+    return NextResponse.json({ error: "Choose an existing category." }, { status: 400 });
+  }
+
+  const embedding = await createProductVector({
+    name: parsed.data.name ?? existing.name,
+    description: parsed.data.description ?? existing.description,
+    category,
+  });
+
   try {
-    const product = await prisma.product.update({
-      where: { id },
-      data: parsed.data,
-      include: { category: { select: { id: true, name: true } } },
+    const product = await prisma.$transaction(async (tx) => {
+      const updated = await tx.product.update({
+        where: { id },
+        data: parsed.data,
+        include: { category: { select: { id: true, name: true } } },
+      });
+      await storeProductVector(tx, updated.id, embedding);
+      return updated;
     });
     return NextResponse.json({ product });
   } catch (error) {

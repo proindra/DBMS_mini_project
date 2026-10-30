@@ -22,6 +22,23 @@ This project uses PostgreSQL with Prisma as the ORM and pgvector for semantic pr
 - Order history stays intact by using safe foreign-key behavior.
 - Product vectors use the pgvector extension.
 
+## Database concepts demonstrated
+
+- **Transactions:** order checkout uses a serializable transaction to
+  decrement stock, create the order and payment, save item snapshots, and
+  clear the cart atomically.
+- **Views:** `AdminSalesSummary` reports total order count and sales excluding
+  cancelled orders. The admin dashboard and summary API read this view.
+- **Indexes:** B-tree indexes support category and active-product browsing,
+  user cart/order lookups, and order-item relationships. An HNSW index with
+  `vector_cosine_ops` accelerates product-vector similarity retrieval.
+- **Vector search:** normalized 384-dimensional product/query embeddings are
+  ranked by pgvector cosine distance.
+
+The relevant indexes are defined in the Prisma schema and the SQL migrations.
+`docs/important-queries.sql` contains isolated temporary-table examples for
+the assignment's required SQL statements and query clauses.
+
 ## Notes
 
 - Money is stored as `Decimal(10,2)` for consistent precision.

@@ -1,6 +1,7 @@
 import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { prisma } from "../src/lib/db";
+import { indexProductEmbeddings } from "../src/lib/vector-search/service";
 
 async function main() {
   await prisma.$transaction(async (tx) => {
@@ -120,6 +121,8 @@ async function main() {
     }
   });
 
+  const indexedCount = await indexProductEmbeddings();
+  console.log(`Indexed embeddings for ${indexedCount} products.`);
   console.log("Database seed complete.");
 }
 

@@ -196,6 +196,14 @@ and positive quantities.
 -   Document the model, dimension, similarity metric, and retrieval
     method.
 
+**Status:** Implemented with the local ONNX export of
+`sentence-transformers/all-MiniLM-L6-v2` (384 dimensions), mean pooling,
+and normalized embeddings. Product embeddings include the product name,
+description, and category; the catalogue has a semantic-search UI and
+parameterized pgvector cosine retrieval. Seeding indexes products, and
+`npm run db:index-embeddings` rebuilds vectors for an existing catalogue.
+See `docs/vector-search.md`.
+
 **Checkpoint:** semantic search returns relevant products and handles
 empty queries/errors. Do not fake vector search with ordinary keyword
 matching.
@@ -212,6 +220,14 @@ Also provide runnable SQL examples demonstrating `CREATE`, `ALTER`,
 `DROP`, `INSERT`, `UPDATE`, `DELETE`, `SELECT`, joins, `GROUP BY`,
 `HAVING`, `ORDER BY`, aggregates, and a subquery. Use safe test data for
 destructive examples.
+
+**Status:** Implemented transactions for checkout, a database-backed
+`AdminSalesSummary` view used by the dashboard and summary API, relational
+B-tree indexes plus an HNSW cosine index for product embeddings, and
+pgvector semantic retrieval. `docs/important-queries.sql` demonstrates all
+required SQL statements and clauses using temporary tables only; its final
+query reads the migrated summary view. See `docs/database-design.md` and
+`docs/testing.md` for concept details and verification steps.
 
 **Checkpoint:** every claimed feature has working SQL/code and a test or
 demo.

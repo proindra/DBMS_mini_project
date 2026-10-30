@@ -29,6 +29,10 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+The first seed/index or semantic-search run downloads the local embedding
+model from Hugging Face. To rebuild product vectors later, run
+`npm run db:index-embeddings`.
+
 ## Demo accounts
 
 After running the seed command, use these local-only demo accounts:
@@ -42,6 +46,8 @@ the seed script. Replace the example `AUTH_SECRET` before deploying.
 ## Store workflows
 
 - Browse and filter active products at `/products`.
+- Search the catalogue by describing a product's purpose or features;
+  embeddings run locally and use PostgreSQL/pgvector for similarity.
 - Add products to your cart and place an order. Checkout computes totals from
   current database prices; payment remains simulated.
 - View your own orders at `/orders`.
@@ -57,6 +63,12 @@ npm run test:auth
 npm run test:workflows
 npm run build
 ```
+
+The project demonstrates serializable checkout transactions, relational and
+vector indexes, an `AdminSalesSummary` PostgreSQL view, and pgvector cosine
+search. Safe SQL examples for the database assignment are in
+[`docs/important-queries.sql`](./docs/important-queries.sql); database
+verification steps are in [`docs/testing.md`](./docs/testing.md).
 
 The values in `.env.example` are local placeholders. Do not put real secrets
 in source control.

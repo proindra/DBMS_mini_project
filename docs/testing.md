@@ -29,6 +29,13 @@ Run validation, authorization, and decimal-total tests:
 npm run test:workflows
 ```
 
+The workflow tests also cover semantic-query validation and vector shape.
+With the database migrated and seeded, open `/products`, describe a product
+need in the “Search by meaning” form, and verify that matching active
+products are returned. The first run downloads the embedding model; repeat
+after a database reset or model/schema change with `npm run db:seed` or
+`npm run db:index-embeddings`.
+
 With the database migrated and seeded, verify:
 
 1. Browse `/products`; check search, category filter, sort, details, and
@@ -50,3 +57,30 @@ With the database migrated and seeded, verify:
 
 Checkout uses a database transaction and conditional stock decrements to
 prevent overselling under concurrent requests. Payment is simulated only.
+
+## Phase 6 database concepts
+
+Apply migrations before checking the summary view and HNSW vector index:
+
+```powershell
+npm run db:migrate
+```
+
+With PostgreSQL's `psql` installed, run the assignment query examples using
+the project's connection details (without Prisma-only URL parameters):
+
+```powershell
+psql "postgresql://<user>:<password>@<host>:<port>/<database>" -v ON_ERROR_STOP=1 -f docs/important-queries.sql
+```
+
+The examples create and remove only temporary tables with fictional rows;
+the script's final query reads `AdminSalesSummary`. Verify the summary API
+returns the same order count and non-cancelled sales total as the view:
+
+```sql
+SELECT "orderCount", "salesTotal" FROM "AdminSalesSummary";
+```
+
+For the index-backed query, use semantic search on `/products` and verify it
+returns active matching products. Order checkout is covered by the workflow
+checks above and executes atomically at serializable isolation.

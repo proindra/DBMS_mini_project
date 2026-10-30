@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { AddToCartButton } from "@/components/products/add-to-cart-button";
+import { SemanticProductSearch } from "@/components/products/semantic-product-search";
 import { ShopNavigation } from "@/components/shop-navigation";
 import { prisma } from "@/lib/db";
 import { productFiltersSchema } from "@/lib/products/validation";
@@ -100,6 +101,8 @@ async function ProductListing({ searchParams }: { searchParams: SearchParams }) 
           </div>
         </form>
       </div>
+
+      <SemanticProductSearch />
 
       {products.length === 0 ? (
         <p className="mt-8 rounded-xl border border-zinc-200 bg-white p-8 text-zinc-700">

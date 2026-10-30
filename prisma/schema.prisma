@@ -123,7 +123,7 @@ model Payment {
 model ProductEmbedding {
   id        Int      @id @default(autoincrement())
   productId Int      @unique
-  embedding Unsupported("vector(3)")
+  embedding Unsupported("vector(384)")
   model     String
   createdAt DateTime @default(now())
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)

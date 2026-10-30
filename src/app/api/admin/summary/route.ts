@@ -5,7 +5,7 @@ import {
   requireRole,
 } from "@/lib/auth/authorization";
 import { getCurrentUser } from "@/lib/auth/current-user";
-import { prisma } from "@/lib/db";
+import { getAdminSummary } from "@/lib/admin/summary";
 
 export async function GET() {
   try {
@@ -18,11 +18,5 @@ export async function GET() {
     throw error;
   }
 
-  const [users, orders, products] = await Promise.all([
-    prisma.user.count(),
-    prisma.order.count(),
-    prisma.product.count(),
-  ]);
-
-  return NextResponse.json({ users, orders, products });
+  return NextResponse.json(await getAdminSummary());
 }

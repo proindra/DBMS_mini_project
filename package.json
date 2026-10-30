@@ -9,12 +9,14 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test:auth": "tsx --test src/lib/auth/authorization.test.ts src/lib/auth/validation.test.ts",
-    "test:workflows": "tsx --test src/lib/auth/authorization.test.ts src/lib/auth/validation.test.ts src/lib/products/validation.test.ts src/lib/orders/service.test.ts",
+    "test:workflows": "tsx --test src/lib/auth/authorization.test.ts src/lib/auth/validation.test.ts src/lib/products/validation.test.ts src/lib/orders/service.test.ts src/lib/vector-search/validation.test.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:seed": "tsx scripts/seed.ts"
+    "db:seed": "tsx scripts/seed.ts",
+    "db:index-embeddings": "tsx scripts/index-product-embeddings.ts"
   },
   "dependencies": {
+    "@huggingface/transformers": "^4.3.2",
     "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "^7.10.1",
     "bcryptjs": "^3.0.3",
