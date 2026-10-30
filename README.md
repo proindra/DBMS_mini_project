@@ -97,31 +97,17 @@ verification steps are in [`docs/testing.md`](./docs/testing.md).
 ## Architecture
 
 ```mermaid
-flowchart TD
-    Customer[Customer or admin browser] --> UI[Next.js App Router UI]
-    UI --> Routes[Next.js API route handlers]
-    UI --> Server[Server-rendered pages and services]
-    Routes --> Auth[Authentication and role checks]
-    Routes --> Services[Product, cart, and order services]
-    Server --> Auth
-    Server --> Services
-    Services --> Prisma[Prisma ORM]
-    Prisma --> DB[(PostgreSQL and pgvector)]
-
-    Customer -->|Natural-language product query| SemanticAPI[Semantic search API]
-    SemanticAPI --> Embed[Local Hugging Face embedding model]
-    Embed -->|384-dimensional query vector| Similarity[Cosine similarity search]
-    Similarity --> DB
-    DB -->|Ranked active products| SemanticAPI
-    SemanticAPI --> UI
-
-    Admin[Admin browser] -->|Manage products and orders| Routes
-    Services -->|Serializable checkout transaction| DB
+flowchart LR
+    Browser[Customer / Admin] --> App[Next.js full-stack app]
+    App --> Services[Auth, products, cart, orders]
+    Services --> ORM[Prisma]
+    ORM --> Database[(PostgreSQL + pgvector)]
+    App -. Semantic search .-> Embeddings[Hugging Face embeddings]
+    Embeddings --> Database
 ```
 
-The Next.js app provides both the customer/admin frontend and backend API.
-Semantic embeddings run locally in the Node.js server; PostgreSQL stores the
-product vectors and ranks matching active products.
+Next.js serves the UI and API. Prisma connects the app services to PostgreSQL;
+local Hugging Face embeddings power product semantic search.
 
 ## Project structure
 
