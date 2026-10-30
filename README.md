@@ -9,13 +9,9 @@
   <img alt="Backend: Next.js Route Handlers" src="https://img.shields.io/badge/Backend-Next.js_API-111111?style=for-the-badge&logo=next.js&logoColor=white" />
 </p>
 <p>
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
   <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
-</p>
-<p>
-  <img alt="PostgreSQL 16" src="https://img.shields.io/badge/PostgreSQL_16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img alt="Database: PostgreSQL 16 with pgvector" src="https://img.shields.io/badge/Database-PostgreSQL_16_%2B_pgvector-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
   <img alt="Prisma" src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" />
-  <img alt="pgvector" src="https://img.shields.io/badge/pgvector-00A98F?style=for-the-badge" />
 </p>
 
 <p><strong>A full-stack DBMS mini-project for product discovery, secure checkout, and order management.</strong></p>
