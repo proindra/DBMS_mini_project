@@ -243,6 +243,14 @@ Use reusable components, responsive styling, form validation, and
 loading/empty/error states. Dashboard figures must come from the
 database.
 
+**Status:** Implemented browser pages and reusable workflows for login and
+registration, product browsing/details and semantic search, cart and
+checkout, customer order history, and admin product/order management.
+Forms include client/server validation and pending/error feedback; pages
+provide loading and empty states, with shared retry and not-found screens.
+Admin dashboard figures are read from the database, including the sales
+summary view.
+
 **Checkpoint:** core workflows work through the browser, not only
 through direct API calls.
 
@@ -255,6 +263,16 @@ through direct API calls.
     explanation, important SQL queries, and testing results.
 -   Capture a few real screenshots for the report.
 -   Check Git status and ensure no secrets are committed.
+
+**Status:** Project setup and functional documentation are updated, including
+the ER diagram, database concepts, vector-search design, runnable safe SQL
+examples, and browser/database verification steps. Lint, typecheck,
+authorization/workflow tests, Prisma validation, and production build pass.
+Tracked environment files were checked; `.env.example` contains placeholders,
+while local `.env` files are ignored. Real browser screenshots were captured
+for home, login, and registration (including a narrow viewport). Database-
+backed migration/SQL tests and authenticated catalogue/checkout/admin browser
+verification still require Docker/PostgreSQL.
 
 **Checkpoint:** a new developer can follow the README and run the
 project.

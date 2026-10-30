@@ -3,9 +3,13 @@
 ## Stack
 
 - Next.js 16 + TypeScript
+- React 19 and Tailwind CSS
+- Node.js 20.9 or newer + npm
 - PostgreSQL 16 + pgvector
 - Prisma ORM
-- Docker Compose for a local database
+- Docker Desktop / Compose for a local database
+- Hugging Face `all-MiniLM-L6-v2` ONNX embeddings, run locally with
+  Transformers.js
 
 ## Local database configuration
 

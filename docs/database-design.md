@@ -18,9 +18,11 @@ This project uses PostgreSQL with Prisma as the ORM and pgvector for semantic pr
 - Email is unique.
 - SKU is unique.
 - Product stock is non-negative.
-- Quantity and price checks remain positive.
+- Database checks require non-negative prices/totals and positive quantities;
+  application validation requires product prices greater than zero.
 - Order history stays intact by using safe foreign-key behavior.
 - Product vectors use the pgvector extension.
+- Product embedding dimension is 384.
 
 ## Database concepts demonstrated
 
@@ -38,6 +40,14 @@ This project uses PostgreSQL with Prisma as the ORM and pgvector for semantic pr
 The relevant indexes are defined in the Prisma schema and the SQL migrations.
 `docs/important-queries.sql` contains isolated temporary-table examples for
 the assignment's required SQL statements and query clauses.
+
+## Entity relationships
+
+The Mermaid ER diagram is maintained in [`er-diagram.mmd`](./er-diagram.mmd).
+Products belong to categories; users own carts and orders; orders contain
+purchase-time item snapshots and an optional payment; products may have one
+embedding. Foreign keys preserve order history and remove a product's
+derived embedding when that product is deleted.
 
 ## Notes
 

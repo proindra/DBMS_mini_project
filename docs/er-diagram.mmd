@@ -1,0 +1,77 @@
+erDiagram
+    User {
+        int id PK
+        string name
+        string email UK
+        string passwordHash
+        enum role
+        datetime createdAt
+    }
+
+    Category {
+        int id PK
+        string name UK
+        string description
+    }
+
+    Product {
+        int id PK
+        int categoryId FK
+        string name
+        string slug UK
+        string description
+        string sku UK
+        decimal price
+        int stock
+        boolean active
+    }
+
+    CartItem {
+        int id PK
+        int userId FK
+        int productId FK
+        int quantity
+        datetime createdAt
+    }
+
+    Order {
+        int id PK
+        int userId FK
+        enum status
+        decimal total
+        datetime createdAt
+    }
+
+    OrderItem {
+        int id PK
+        int orderId FK
+        int productId FK
+        string productName
+        decimal unitPrice
+        int quantity
+    }
+
+    Payment {
+        int id PK
+        int orderId FK_UK
+        decimal amount
+        enum status
+        datetime createdAt
+    }
+
+    ProductEmbedding {
+        int id PK
+        int productId FK_UK
+        vector_384 embedding
+        string model
+        datetime createdAt
+    }
+
+    User ||--o{ CartItem : owns
+    Product ||--o{ CartItem : appears_in
+    Category ||--o{ Product : categorizes
+    User ||--o{ Order : places
+    Order ||--|{ OrderItem : contains
+    Product ||--o{ OrderItem : purchased_as
+    Order ||--o| Payment : has
+    Product ||--o| ProductEmbedding : described_by

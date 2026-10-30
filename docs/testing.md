@@ -58,6 +58,20 @@ With the database migrated and seeded, verify:
 Checkout uses a database transaction and conditional stock decrements to
 prevent overselling under concurrent requests. Payment is simulated only.
 
+## Phase 7 browser checkpoint
+
+With the development server running, complete the customer journey in the
+browser: register or sign in, browse/filter products, try semantic search,
+open a product detail, add it to the cart, update quantity, place an order,
+and open the resulting order details. Verify empty catalogue/cart/order
+states, pending form feedback, validation messages, the shared retry screen
+on a temporary server failure, and the not-found page for an unknown product
+or order.
+
+Sign in as the admin and verify the database-backed summary, product
+create/edit/deactivate controls, and order status controls. Confirm the
+layout remains usable at narrow viewport widths.
+
 ## Phase 6 database concepts
 
 Apply migrations before checking the summary view and HNSW vector index:
@@ -84,3 +98,25 @@ SELECT "orderCount", "salesTotal" FROM "AdminSalesSummary";
 For the index-backed query, use semantic search on `/products` and verify it
 returns active matching products. Order checkout is covered by the workflow
 checks above and executes atomically at serializable isolation.
+
+## Phase 8 verification record
+
+Automated checks run for this implementation:
+
+```powershell
+npm run lint
+npm run typecheck
+npm run test:auth
+npm run test:workflows
+npm run build
+npx prisma validate
+```
+
+These checks passed in the development environment. The workflow runner
+reported 16 passing tests. PostgreSQL-backed migration/query checks and
+authenticated browser workflows remain manual: Docker/PostgreSQL and `psql`
+were unavailable in that environment, so no database-dependent result is
+claimed here. Real browser screenshots were captured for the home, login,
+and registration pages, including registration at a narrow viewport. Capture
+catalogue, checkout, order, and admin screenshots after completing the live
+browser checkpoint above against a migrated and seeded database.
