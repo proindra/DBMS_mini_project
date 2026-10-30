@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { AddToCartButton } from "@/components/products/add-to-cart-button";
 import { formatCurrency } from "@/lib/currency";
 
@@ -22,9 +22,11 @@ export function SemanticProductSearch() {
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const searchRequestId = useRef(0);
 
   async function search(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const requestId = ++searchRequestId.current;
     setPending(true);
     setError(null);
     setProducts([]);
@@ -40,6 +42,7 @@ export function SemanticProductSearch() {
         error?: string;
         products?: SearchProduct[];
       };
+      if (requestId !== searchRequestId.current) return;
 
       if (!response.ok) {
         setError(result.error ?? "Semantic search failed.");
@@ -49,10 +52,23 @@ export function SemanticProductSearch() {
       setProducts(result.products ?? []);
       setSearched(true);
     } catch {
-      setError("Could not reach the server. Please try again.");
+      if (requestId === searchRequestId.current) {
+        setError("Could not reach the server. Please try again.");
+      }
     } finally {
-      setPending(false);
+      if (requestId === searchRequestId.current) {
+        setPending(false);
+      }
     }
+  }
+
+  function updateQuery(value: string) {
+    searchRequestId.current += 1;
+    setQuery(value);
+    setProducts([]);
+    setSearched(false);
+    setError(null);
+    setPending(false);
   }
 
   return (
@@ -64,7 +80,7 @@ export function SemanticProductSearch() {
       <form onSubmit={search} className="mt-4 flex flex-col gap-3 sm:flex-row">
         <input
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => updateQuery(event.target.value)}
           minLength={2}
           maxLength={300}
           required
