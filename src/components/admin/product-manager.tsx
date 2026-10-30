@@ -101,7 +101,7 @@ export function ProductManager({
             {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
           </select>
         </label>
-        <Field label="Price" name="price" type="number" min="0.01" step="0.01" required />
+        <Field label="Price (INR)" name="price" type="number" min="0.01" step="0.01" required />
         <Field label="Stock" name="stock" type="number" min="0" step="1" required />
         <label className="block text-sm font-medium text-zinc-800 sm:col-span-2">
           Description
@@ -151,7 +151,7 @@ export function ProductManager({
                   {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
                 </select>
               </label>
-              <Field label="Price" name="price" type="number" min="0.01" step="0.01" defaultValue={product.price} required />
+              <Field label="Price (INR)" name="price" type="number" min="0.01" step="0.01" defaultValue={product.price} required />
               <Field label="Stock" name="stock" type="number" min="0" step="1" defaultValue={String(product.stock)} required />
               <label className="block text-sm font-medium text-zinc-800 sm:col-span-2">
                 Description

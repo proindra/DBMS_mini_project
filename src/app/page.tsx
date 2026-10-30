@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center gap-8 px-6 py-24 sm:px-10">
+    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center gap-8 px-6 py-24 sm:px-10">
       <div className="space-y-4">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">
           DBMS mini-project

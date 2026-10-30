@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
-import { ShopNavigation } from "@/components/shop-navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
+import { formatCurrency } from "@/lib/currency";
 import { prisma } from "@/lib/db";
 
 export default function OrderPage({ params }: { params: Promise<{ id: string }> }) {
@@ -28,9 +28,8 @@ async function OrderContent({ params }: { params: Promise<{ id: string }> }) {
   if (!order) notFound();
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-4xl px-6 py-12">
-      <ShopNavigation />
-      <section className="mt-10 rounded-xl border border-zinc-200 bg-white p-6">
+    <main className="mx-auto w-full max-w-4xl flex-1 px-6 py-12">
+      <section className="rounded-xl border border-zinc-200 bg-white p-6">
         <Link href="/orders" className="text-sm font-semibold text-blue-700 hover:underline">
           ← Your orders
         </Link>
@@ -44,18 +43,18 @@ async function OrderContent({ params }: { params: Promise<{ id: string }> }) {
               <div>
                 <p className="font-medium text-zinc-950">{item.productName}</p>
                 <p className="mt-1 text-sm text-zinc-600">
-                  ${Number(item.unitPrice).toFixed(2)} × {item.quantity}
+                  {formatCurrency(item.unitPrice.toString())} × {item.quantity}
                 </p>
               </div>
               <p className="font-semibold text-zinc-950">
-                ${(Number(item.unitPrice) * item.quantity).toFixed(2)}
+                {formatCurrency(Number(item.unitPrice) * item.quantity)}
               </p>
             </div>
           ))}
         </div>
         <p className="mt-4 flex justify-between border-t border-zinc-200 pt-4 text-lg font-semibold text-zinc-950">
           <span>Total</span>
-          <span>${Number(order.total).toFixed(2)}</span>
+          <span>{formatCurrency(order.total.toString())}</span>
         </p>
       </section>
     </main>

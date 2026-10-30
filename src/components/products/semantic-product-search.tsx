@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { AddToCartButton } from "@/components/products/add-to-cart-button";
+import { formatCurrency } from "@/lib/currency";
 
 type SearchProduct = {
   id: number;
@@ -112,7 +113,7 @@ export function SemanticProductSearch() {
                 {product.description}
               </p>
               <p className="mt-4 text-xl font-semibold text-zinc-950">
-                ${Number(product.price).toFixed(2)}
+                {formatCurrency(product.price)}
               </p>
               <p className="mt-1 text-sm text-zinc-600">
                 {product.stock > 0

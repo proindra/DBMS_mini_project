@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { formatCurrency } from "@/lib/currency";
 
 export type CartItemView = {
   id: number;
@@ -106,10 +107,10 @@ export function CartManager({ initialItems }: { initialItems: CartItemView[] }) 
                 <Link href={`/products/${item.slug}`} className="font-semibold text-zinc-950 hover:text-blue-700">
                   {item.productName}
                 </Link>
-                <p className="mt-1 text-sm text-zinc-600">${Number(item.price).toFixed(2)} each</p>
+                <p className="mt-1 text-sm text-zinc-600">{formatCurrency(item.price)} each</p>
               </div>
               <p className="font-semibold text-zinc-950">
-                ${(Number(item.price) * item.quantity).toFixed(2)}
+                {formatCurrency(Number(item.price) * item.quantity)}
               </p>
             </div>
             {!item.active && (
@@ -172,7 +173,7 @@ export function CartManager({ initialItems }: { initialItems: CartItemView[] }) 
         <h2 className="font-semibold text-zinc-950">Order summary</h2>
         <p className="mt-4 flex justify-between text-zinc-700">
           <span>Total</span>
-          <span className="font-semibold text-zinc-950">${total.toFixed(2)}</span>
+          <span className="font-semibold text-zinc-950">{formatCurrency(total)}</span>
         </p>
         <p className="mt-3 text-xs leading-5 text-zinc-600">
           Payment is simulated. No card details are collected.

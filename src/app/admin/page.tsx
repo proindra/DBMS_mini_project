@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { SignOutButton } from "@/components/auth/sign-out-button";
 import { OrderManager, type AdminOrderView } from "@/components/admin/order-manager";
 import { ProductManager, type AdminProductView } from "@/components/admin/product-manager";
 import { getAdminSummary } from "@/lib/admin/summary";
 import { getCurrentUser } from "@/lib/auth/current-user";
+import { formatCurrency } from "@/lib/currency";
 import { prisma } from "@/lib/db";
 
 export default function AdminPage() {
@@ -57,20 +57,19 @@ async function AdminContent() {
     user: order.user,
   }));
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl px-6 py-12">
-      <Link href="/account" className="text-sm font-semibold text-blue-700">
-        Back to account
+    <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
+      <Link href="/account" className="text-sm font-semibold text-blue-700 hover:underline">
+        ← Back to account
       </Link>
       <h1 className="mt-8 text-3xl font-semibold text-zinc-950">Admin dashboard</h1>
       <p className="mt-3 text-zinc-600">
         Signed in as {user.name}. Admin-only operations must also check this role
         in their server-side handlers.
       </p>
-      <SignOutButton />
       <section className="mt-8 grid gap-4 sm:grid-cols-3">
         <SummaryCard label="Products" value={products.length} />
         <SummaryCard label="Orders" value={summary.orders} />
-        <SummaryCard label="Order total (excluding cancelled)" value={`$${Number(summary.salesTotal).toFixed(2)}`} />
+        <SummaryCard label="Order total (excluding cancelled)" value={formatCurrency(summary.salesTotal)} />
         <SummaryCard label="Registered users" value={summary.users} />
       </section>
       <ProductManager initialProducts={productViews} categories={categories} />

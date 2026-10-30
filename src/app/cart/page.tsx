@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { CartManager, type CartItemView } from "@/components/cart/cart-manager";
-import { ShopNavigation } from "@/components/shop-navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { prisma } from "@/lib/db";
 
@@ -35,9 +34,8 @@ async function CartContent() {
   }));
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl px-6 py-12">
-      <ShopNavigation />
-      <h1 className="mt-10 text-3xl font-semibold text-zinc-950">Your cart</h1>
+    <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
+      <h1 className="text-3xl font-semibold text-zinc-950">Your cart</h1>
       <CartManager initialItems={viewItems} />
     </main>
   );

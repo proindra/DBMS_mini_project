@@ -51,6 +51,7 @@ derived embedding when that product is deleted.
 
 ## Notes
 
-- Money is stored as `Decimal(10,2)` for consistent precision.
+- Product prices and order amounts are denominated in Indian rupees (INR) and
+  stored as `Decimal(10,2)` for consistent precision.
 - Orders keep immutable snapshots of product name and price at purchase time.
 - Cart items enforce one row per user-product pair.

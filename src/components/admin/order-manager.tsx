@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatCurrency } from "@/lib/currency";
 
 export type AdminOrderView = {
   id: number;
@@ -57,7 +58,7 @@ export function OrderManager({ initialOrders }: { initialOrders: AdminOrderView[
           {orders.map((order) => (
             <article key={order.id} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-white p-5">
               <div>
-                <p className="font-semibold text-zinc-950">Order #{order.id} · ${Number(order.total).toFixed(2)}</p>
+                <p className="font-semibold text-zinc-950">Order #{order.id} · {formatCurrency(order.total)}</p>
                 <p className="mt-1 text-sm text-zinc-600">{order.user.name} · {order.user.email}</p>
                 <p className="mt-1 text-xs text-zinc-500">{new Date(order.createdAt).toLocaleString()}</p>
               </div>

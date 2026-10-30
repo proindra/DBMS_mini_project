@@ -67,11 +67,13 @@ the seed script. Replace the example `AUTH_SECRET` before deploying.
 
 ## Store workflows
 
+- Use the shared navigation to reach the catalogue and, when signed in,
+  customer orders/cart or admin tools.
 - Browse and filter active products at `/products`.
 - Search the catalogue by describing a product's purpose or features;
   embeddings run locally and use PostgreSQL/pgvector for similarity.
 - Add products to your cart and place an order. Checkout computes totals from
-  current database prices; payment remains simulated.
+  current database prices in Indian rupees (INR); payment remains simulated.
 - View your own orders at `/orders`.
 - Admins can add/edit/deactivate products, update stock, and manage order
   statuses at `/admin`.

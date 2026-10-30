@@ -3,7 +3,7 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import { AddToCartButton } from "@/components/products/add-to-cart-button";
 import { SemanticProductSearch } from "@/components/products/semantic-product-search";
-import { ShopNavigation } from "@/components/shop-navigation";
+import { formatCurrency } from "@/lib/currency";
 import { prisma } from "@/lib/db";
 import { productFiltersSchema } from "@/lib/products/validation";
 
@@ -60,9 +60,8 @@ async function ProductListing({ searchParams }: { searchParams: SearchParams }) 
   ]);
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl px-6 py-12">
-      <ShopNavigation />
-      <div className="mt-10 flex flex-wrap items-end justify-between gap-5">
+    <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
+      <div className="flex flex-wrap items-end justify-between gap-5">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-blue-700">Catalogue</p>
           <h1 className="mt-2 text-3xl font-semibold text-zinc-950">Products</h1>
@@ -120,7 +119,7 @@ async function ProductListing({ searchParams }: { searchParams: SearchParams }) 
                 <Link href={`/products/${product.slug}`} className="hover:text-blue-700">{product.name}</Link>
               </h2>
               <p className="mt-2 flex-1 text-sm leading-6 text-zinc-600">{product.description}</p>
-              <p className="mt-4 text-xl font-semibold text-zinc-950">${Number(product.price).toFixed(2)}</p>
+              <p className="mt-4 text-xl font-semibold text-zinc-950">{formatCurrency(product.price.toString())}</p>
               <p className="mt-1 text-sm text-zinc-600">
                 {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
               </p>
