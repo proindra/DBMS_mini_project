@@ -12,6 +12,7 @@
   <img alt="Database: PostgreSQL 16 with pgvector" src="https://img.shields.io/badge/Database-PostgreSQL_16_%2B_pgvector-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
   <img alt="Prisma" src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" />
   <img alt="Container: Docker" src="https://img.shields.io/badge/Container-Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img alt="Embeddings: Hugging Face" src="https://img.shields.io/badge/Embeddings-Hugging_Face-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black" />
 </p>
 
 <p><strong>A full-stack DBMS mini-project for product discovery, secure checkout, and order management.</strong></p>
@@ -92,6 +93,35 @@ vector indexes, an `AdminSalesSummary` PostgreSQL view, and pgvector cosine
 search. Safe SQL examples for the database assignment are in
 [`docs/important-queries.sql`](./docs/important-queries.sql); database
 verification steps are in [`docs/testing.md`](./docs/testing.md).
+
+## Architecture
+
+```mermaid
+flowchart TD
+    Customer[Customer or admin browser] --> UI[Next.js App Router UI]
+    UI --> Routes[Next.js API route handlers]
+    UI --> Server[Server-rendered pages and services]
+    Routes --> Auth[Authentication and role checks]
+    Routes --> Services[Product, cart, and order services]
+    Server --> Auth
+    Server --> Services
+    Services --> Prisma[Prisma ORM]
+    Prisma --> DB[(PostgreSQL and pgvector)]
+
+    Customer -->|Natural-language product query| SemanticAPI[Semantic search API]
+    SemanticAPI --> Embed[Local Hugging Face embedding model]
+    Embed -->|384-dimensional query vector| Similarity[Cosine similarity search]
+    Similarity --> DB
+    DB -->|Ranked active products| SemanticAPI
+    SemanticAPI --> UI
+
+    Admin[Admin browser] -->|Manage products and orders| Routes
+    Services -->|Serializable checkout transaction| DB
+```
+
+The Next.js app provides both the customer/admin frontend and backend API.
+Semantic embeddings run locally in the Node.js server; PostgreSQL stores the
+product vectors and ranks matching active products.
 
 ## Project structure
 
