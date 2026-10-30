@@ -5,7 +5,10 @@
 ### Browse products. Search by meaning. Check out with confidence.
 
 <p>
-  <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=next.js&logoColor=white" />
+  <img alt="Frontend: Next.js 16" src="https://img.shields.io/badge/Frontend-Next.js_16-000000?style=for-the-badge&logo=next.js&logoColor=white" />
+  <img alt="Backend: Next.js Route Handlers" src="https://img.shields.io/badge/Backend-Next.js_API-111111?style=for-the-badge&logo=next.js&logoColor=white" />
+</p>
+<p>
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
   <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
 </p>
