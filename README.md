@@ -2,18 +2,21 @@
 
 # E-commerce Order Management
 
-### Shop smarter. Find products by meaning. Manage orders with confidence.
+### Browse products. Search by meaning. Check out with confidence.
 
-![Frontend](https://img.shields.io/badge/Frontend-Next.js_16-000000?logo=next.js&logoColor=white)
-![Language](https://img.shields.io/badge/Language-TypeScript-3178C6?logo=typescript&logoColor=white)
-![Database](https://img.shields.io/badge/Database-PostgreSQL_16-4169E1?logo=postgresql&logoColor=white)
-![ORM](https://img.shields.io/badge/ORM-Prisma-2D3748?logo=prisma&logoColor=white)
-![Vector search](https://img.shields.io/badge/Vector_Search-pgvector-00A98F)
-![Styling](https://img.shields.io/badge/Styling-Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)
+<p>
+  <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=next.js&logoColor=white" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
+</p>
+<p>
+  <img alt="PostgreSQL 16" src="https://img.shields.io/badge/PostgreSQL_16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img alt="Prisma" src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" />
+  <img alt="pgvector" src="https://img.shields.io/badge/pgvector-00A98F?style=for-the-badge" />
+</p>
 
-**A full-stack DBMS mini-project for product discovery, secure checkout, and
-order management.** Customers can search products with local AI embeddings;
-admins can manage products and order status.
+<p><strong>A full-stack DBMS mini-project for product discovery, secure checkout, and order management.</strong></p>
+<p>Semantic search runs locally with Hugging Face embeddings and PostgreSQL pgvector.</p>
 
 </div>
 
