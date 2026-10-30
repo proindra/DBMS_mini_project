@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { AddToCartButton } from "@/components/products/add-to-cart-button";
 import { SemanticProductSearch } from "@/components/products/semantic-product-search";
@@ -28,6 +29,8 @@ async function ProductListing({ searchParams }: { searchParams: SearchParams }) 
   const params = await searchParams;
   const parsed = productFiltersSchema.safeParse(params);
   const filters = parsed.success ? parsed.data : { sort: "name" as const };
+  await connection();
+
   const [products, categories] = await Promise.all([
     prisma.product.findMany({
       where: {
