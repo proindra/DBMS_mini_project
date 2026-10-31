@@ -6,14 +6,14 @@
 
 <p>
   <img alt="Full-stack React framework: Next.js 16" src="https://img.shields.io/badge/Full--Stack_React_Framework-Next.js_16-111827?style=for-the-badge&labelColor=6D28D9&logo=next.js&logoColor=white" />
+  <img alt="CSS: Tailwind CSS" src="https://img.shields.io/badge/CSS-Tailwind_CSS-0E7490?style=for-the-badge&labelColor=164E63&logo=tailwindcss&logoColor=white" />
 </p>
 <p>
-  <img alt="CSS: Tailwind CSS" src="https://img.shields.io/badge/CSS-Tailwind_CSS-0E7490?style=for-the-badge&labelColor=164E63&logo=tailwindcss&logoColor=white" />
   <img alt="Database: PostgreSQL 16 with pgvector" src="https://img.shields.io/badge/Database-PostgreSQL_16_%2B_pgvector-2563EB?style=for-the-badge&labelColor=1E3A8A&logo=postgresql&logoColor=white" />
   <img alt="In-memory database: Redis Stack" src="https://img.shields.io/badge/In--Memory_Database-Redis_Stack-DC382D?style=for-the-badge&labelColor=7F1D1D&logo=redis&logoColor=white" />
-  <img alt="ORM: Prisma" src="https://img.shields.io/badge/ORM-Prisma-334155?style=for-the-badge&labelColor=9A3412&logo=prisma&logoColor=white" />
 </p>
 <p>
+  <img alt="ORM: Prisma" src="https://img.shields.io/badge/ORM-Prisma-334155?style=for-the-badge&labelColor=9A3412&logo=prisma&logoColor=white" />
   <img alt="Container: Docker" src="https://img.shields.io/badge/Container-Docker-0284C7?style=for-the-badge&labelColor=075985&logo=docker&logoColor=white" />
   <img alt="Embeddings: Hugging Face" src="https://img.shields.io/badge/Embeddings-Hugging_Face-FACC15?style=for-the-badge&labelColor=6B21A8&logo=huggingface&logoColor=white" />
 </p>
