@@ -55,6 +55,19 @@ model from Hugging Face and caches it locally. Product/query text is
 embedded in the Node.js server and is not sent to a hosted embedding API.
 To rebuild product vectors later, run `npm run db:index-embeddings`.
 
+## Prisma Studio
+
+Start the local database and configure `DATABASE_URL` in `.env`, then run:
+
+```powershell
+npm run db:studio
+```
+
+Prisma Studio opens a local browser interface for viewing and editing database
+records. It connects to the database specified by `DATABASE_URL`; changes made
+in Studio directly affect that database. Use a development database, and avoid
+exposing Studio or using it to edit production data.
+
 ## Demo accounts
 
 After running the seed command, use these local-only demo accounts:
