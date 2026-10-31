@@ -10,6 +10,7 @@
 <p>
   <img alt="CSS: Tailwind CSS" src="https://img.shields.io/badge/CSS-Tailwind_CSS-0E7490?style=for-the-badge&labelColor=164E63&logo=tailwindcss&logoColor=white" />
   <img alt="Database: PostgreSQL 16 with pgvector" src="https://img.shields.io/badge/Database-PostgreSQL_16_%2B_pgvector-2563EB?style=for-the-badge&labelColor=1E3A8A&logo=postgresql&logoColor=white" />
+  <img alt="In-memory database: Redis Stack" src="https://img.shields.io/badge/In--Memory_Database-Redis_Stack-DC382D?style=for-the-badge&labelColor=7F1D1D&logo=redis&logoColor=white" />
   <img alt="ORM: Prisma" src="https://img.shields.io/badge/ORM-Prisma-334155?style=for-the-badge&labelColor=9A3412&logo=prisma&logoColor=white" />
 </p>
 <p>

@@ -30,7 +30,7 @@ const features = [
 export default function Home() {
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10 sm:px-8 sm:py-14">
-      <section className="relative isolate overflow-hidden rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-6 py-10 shadow-sm sm:px-10 sm:py-14 lg:px-14 lg:py-16">
+      <section className="relative isolate overflow-hidden rounded-4xl border border-blue-100 bg-linear-to-br from-blue-50 via-white to-indigo-50 px-6 py-10 shadow-sm sm:px-10 sm:py-14 lg:px-14 lg:py-16">
         <div
           aria-hidden="true"
           className="absolute -right-20 -top-28 -z-10 size-96 rounded-full bg-blue-200/30 blur-3xl"
@@ -119,7 +119,7 @@ export default function Home() {
           <div className="relative mx-auto w-full max-w-md lg:ml-auto">
             <div
               aria-hidden="true"
-              className="absolute -inset-5 rounded-[2rem] bg-gradient-to-br from-blue-200/50 to-indigo-200/40 blur-2xl"
+              className="absolute -inset-5 rounded-4xl bg-linear-to-br from-blue-200/50 to-indigo-200/40 blur-2xl"
             />
             <div className="relative rounded-3xl border border-white/80 bg-white/90 p-5 shadow-xl shadow-blue-900/10 backdrop-blur sm:p-6">
               <div className="flex items-start justify-between gap-4">
