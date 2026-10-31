@@ -64,11 +64,19 @@ PostgreSQL. Its RedisInsight GUI is available at
 [http://localhost:8001](http://localhost:8001); Redis itself remains available
 to the app at `redis://localhost:6379`.
 Set `REDIS_URL="redis://localhost:6379"` in `.env` (add it manually if `.env`
-already existed before Redis was added). Redis caches product catalogue
-queries and product details for 5 minutes, categories for 30 minutes, and
-semantic-search results for 2 minutes. Product changes made through the app
-invalidate the catalogue and semantic-search caches. Changes made directly
-through Prisma Studio or SQL become visible when their cache entries expire.
+already existed before Redis was added). Cache entries expire after these
+time-to-live (TTL) durations:
+
+| Cached data | TTL |
+| --- | --- |
+| Product catalogue and filtered catalogue queries | 5 minutes |
+| Individual product details | 5 minutes |
+| Product categories | 30 minutes |
+| Semantic-search results | 2 minutes |
+
+Product changes made through the app invalidate the catalogue and
+semantic-search caches. Changes made directly through Prisma Studio or SQL
+become visible when their cache entries expire.
 
 Redis is only a disposable cache; PostgreSQL remains the source of truth. If
 Redis is unavailable, the app logs a warning and reads from PostgreSQL without
