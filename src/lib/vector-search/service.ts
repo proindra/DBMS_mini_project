@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { CACHE_TTL_SECONDS, getCachedValue } from "@/lib/cache/redis";
 import {
   EMBEDDING_MODEL,
   embedText,
@@ -25,6 +26,13 @@ export type SemanticProduct = {
   categoryName: string;
   similarity: number;
 };
+
+export class SemanticQueryEmbeddingError extends Error {
+  constructor(readonly originalError: unknown) {
+    super("Could not create an embedding for the semantic query.");
+    this.name = "SemanticQueryEmbeddingError";
+  }
+}
 
 export async function createProductVector(product: ProductForEmbedding) {
   return embedText(productEmbeddingText(product));
@@ -74,6 +82,25 @@ export async function searchProductsByVector(
     ORDER BY pe."embedding" <=> ${vector}::vector
     LIMIT ${SEMANTIC_SEARCH_LIMIT}
   `;
+}
+
+export function searchProductsByText(query: string, categoryId?: number) {
+  const normalizedQuery = query.trim().toLowerCase();
+  return getCachedValue(
+    "catalogue",
+    `semantic:${categoryId ?? "all"}:${normalizedQuery}`,
+    CACHE_TTL_SECONDS.semanticSearch,
+    async () => {
+      let embedding: number[];
+      try {
+        embedding = await embedText(query);
+      } catch (error) {
+        throw new SemanticQueryEmbeddingError(error);
+      }
+
+      return searchProductsByVector(embedding, categoryId);
+    },
+  );
 }
 
 export async function indexProductEmbeddings() {

@@ -1,4 +1,4 @@
-# IMPLEMENTATION.md --- E-commerce Order Management System
+# IMPLEMENTATION.md --- StoreIQ: The Smart E-commerce Store
 
 ## Goal
 

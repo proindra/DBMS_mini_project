@@ -32,9 +32,18 @@ export function SiteNavigation() {
       >
         <Link
           href="/"
-          className="mr-auto text-base font-bold tracking-tight text-zinc-950"
+          aria-label="StoreIQ home"
+          className="mr-auto inline-flex items-center gap-2.5 text-zinc-950"
         >
-          E-commerce Store
+          <span className="flex size-9 items-center justify-center rounded-xl bg-blue-700 text-sm font-bold tracking-tight text-white shadow-sm">
+            IQ
+          </span>
+          <span className="flex flex-col leading-tight">
+            <span className="text-base font-bold tracking-tight">StoreIQ</span>
+            <span className="mt-0.5 text-[10px] font-medium tracking-wide text-zinc-500">
+              SMARTER SHOPPING
+            </span>
+          </span>
         </Link>
         <div className="flex flex-wrap items-center gap-1">
           {links.map(({ href, label }) => {

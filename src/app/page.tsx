@@ -39,7 +39,7 @@ export default function Home() {
           <div>
             <p className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-blue-800">
               <span className="size-2 rounded-full bg-blue-600" />
-              A smarter way to shop
+              StoreIQ · The smart e-commerce store
             </p>
             <h1 className="mt-6 max-w-xl text-4xl font-semibold leading-[1.08] tracking-tight text-zinc-950 sm:text-5xl lg:text-6xl">
               Find what you need.{" "}

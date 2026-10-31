@@ -4,7 +4,7 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import { AddToCartButton } from "@/components/products/add-to-cart-button";
 import { formatCurrency } from "@/lib/currency";
-import { prisma } from "@/lib/db";
+import { getCachedProductBySlug } from "@/lib/products/cache";
 
 export default function ProductPage({
   params,
@@ -22,10 +22,7 @@ async function ProductDetails({ params }: { params: Promise<{ slug: string }> })
   const { slug } = await params;
   await connection();
 
-  const product = await prisma.product.findFirst({
-    where: { slug, active: true },
-    include: { category: { select: { name: true } } },
-  });
+  const product = await getCachedProductBySlug(slug);
   if (!product) notFound();
 
   return (

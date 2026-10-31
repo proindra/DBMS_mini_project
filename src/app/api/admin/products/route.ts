@@ -6,6 +6,7 @@ import {
   requireRole,
 } from "@/lib/auth/authorization";
 import { getCurrentUser } from "@/lib/auth/current-user";
+import { invalidateProductCatalogueCache } from "@/lib/cache/redis";
 import { prisma } from "@/lib/db";
 import { productInputSchema } from "@/lib/products/validation";
 import {
@@ -82,6 +83,7 @@ export async function POST(request: Request) {
       await storeProductVector(tx, created.id, embedding);
       return created;
     });
+    await invalidateProductCatalogueCache();
     return NextResponse.json({ product }, { status: 201 });
   } catch (error) {
     if (

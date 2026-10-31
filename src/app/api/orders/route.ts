@@ -6,6 +6,7 @@ import {
   requireRole,
 } from "@/lib/auth/authorization";
 import { getCurrentUser } from "@/lib/auth/current-user";
+import { invalidateProductCatalogueCache } from "@/lib/cache/redis";
 import { prisma } from "@/lib/db";
 import { createOrderFromCart, OrderWorkflowError } from "@/lib/orders/service";
 import { Prisma } from "@prisma/client";
@@ -48,6 +49,7 @@ export async function POST() {
 
   try {
     const order = await createOrderFromCart(prisma, user.id);
+    await invalidateProductCatalogueCache();
     return NextResponse.json({ order }, { status: 201 });
   } catch (error) {
     if (error instanceof OrderWorkflowError) {

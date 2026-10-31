@@ -7,6 +7,7 @@ import {
   requireRole,
 } from "@/lib/auth/authorization";
 import { getCurrentUser } from "@/lib/auth/current-user";
+import { invalidateProductCatalogueCache } from "@/lib/cache/redis";
 import { prisma } from "@/lib/db";
 
 const orderStatusSchema = z.object({
@@ -92,6 +93,9 @@ export async function PATCH(
 
     if ("error" in result) {
       return NextResponse.json({ error: result.error }, { status: result.status });
+    }
+    if (parsed.data.status === "CANCELLED") {
+      await invalidateProductCatalogueCache();
     }
     return NextResponse.json({ order: result.order });
   } catch (error) {

@@ -4,7 +4,10 @@ import { Suspense } from "react";
 import { AddToCartButton } from "@/components/products/add-to-cart-button";
 import { SemanticProductSearch } from "@/components/products/semantic-product-search";
 import { formatCurrency } from "@/lib/currency";
-import { prisma } from "@/lib/db";
+import {
+  getCachedCatalogProducts,
+  getCachedCategories,
+} from "@/lib/products/cache";
 import { productFiltersSchema } from "@/lib/products/validation";
 
 type SearchParams = Promise<{
@@ -32,31 +35,8 @@ async function ProductListing({ searchParams }: { searchParams: SearchParams }) 
   await connection();
 
   const [products, categories] = await Promise.all([
-    prisma.product.findMany({
-      where: {
-        active: true,
-        ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
-        ...(filters.q
-          ? {
-              OR: [
-                { name: { contains: filters.q, mode: "insensitive" } },
-                { description: { contains: filters.q, mode: "insensitive" } },
-                { sku: { contains: filters.q, mode: "insensitive" } },
-              ],
-            }
-          : {}),
-      },
-      include: { category: { select: { name: true } } },
-      orderBy:
-        filters.sort === "price-asc"
-          ? { price: "asc" }
-          : filters.sort === "price-desc"
-            ? { price: "desc" }
-            : filters.sort === "newest"
-              ? { createdAt: "desc" }
-              : { name: "asc" },
-    }),
-    prisma.category.findMany({ orderBy: { name: "asc" } }),
+    getCachedCatalogProducts(filters),
+    getCachedCategories(),
   ]);
 
   return (

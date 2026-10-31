@@ -18,8 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "E-commerce Order Management",
-  description: "A DBMS mini-project for managing products and orders.",
+  title: "StoreIQ — The Smart E-commerce Store",
+  description:
+    "Discover products with intelligent search and manage every order with StoreIQ.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -37,8 +38,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   aria-label="Main navigation"
                   className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-3"
                 >
-                  <Link href="/" className="font-bold text-zinc-950">
-                    E-commerce Store
+                  <Link
+                    href="/"
+                    aria-label="StoreIQ home"
+                    className="inline-flex items-center gap-2 font-bold text-zinc-950"
+                  >
+                    <span className="flex size-8 items-center justify-center rounded-lg bg-blue-700 text-xs text-white">
+                      IQ
+                    </span>
+                    StoreIQ
                   </Link>
                   <Link
                     href="/products"
