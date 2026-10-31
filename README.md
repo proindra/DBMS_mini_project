@@ -47,6 +47,15 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Local services and ports
+
+| Service | Runs with | Port / URL | Purpose and data |
+| --- | --- | --- | --- |
+| PostgreSQL 16 + pgvector | Docker | `5432` | Primary database; data persists in the `postgres_data` Docker volume. |
+| Redis Stack | Docker | `6379` | In-memory cache and temporary data; cache is disposable. |
+| RedisInsight | Included with Redis Stack | [http://localhost:8001](http://localhost:8001) | Browser GUI for viewing Redis keys and cache data. |
+| Prisma Studio | `npm run db:studio` | [http://localhost:51212](http://localhost:51212) | Browser GUI for viewing and editing PostgreSQL records; the port may vary. |
+
 The checked-in `.env.example` contains local-only values. For deployment,
 provide a strong unique `AUTH_SECRET`, a production `DATABASE_URL`, and a
 Redis `REDIS_URL` using your hosting provider's secret manager; never commit
