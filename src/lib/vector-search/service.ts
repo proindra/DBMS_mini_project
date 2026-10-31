@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import {
   EMBEDDING_MODEL,
@@ -46,8 +46,15 @@ export async function storeProductVector(
   `;
 }
 
-export async function searchProductsByVector(embedding: number[]) {
+export async function searchProductsByVector(
+  embedding: number[],
+  categoryId?: number,
+) {
   const vector = toPgVector(embedding);
+  const categoryFilter =
+    categoryId === undefined
+      ? Prisma.empty
+      : Prisma.sql`AND p."categoryId" = ${categoryId}`;
   return prisma.$queryRaw<SemanticProduct[]>`
     SELECT
       p."id",
@@ -63,6 +70,7 @@ export async function searchProductsByVector(embedding: number[]) {
     JOIN "Category" c ON c."id" = p."categoryId"
     WHERE p."active" = true
       AND pe."model" = ${EMBEDDING_MODEL}
+      ${categoryFilter}
     ORDER BY pe."embedding" <=> ${vector}::vector
     LIMIT ${SEMANTIC_SEARCH_LIMIT}
   `;

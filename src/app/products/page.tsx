@@ -104,7 +104,7 @@ async function ProductListing({ searchParams }: { searchParams: SearchParams }) 
         </form>
       </div>
 
-      <SemanticProductSearch />
+      <SemanticProductSearch categoryId={filters.categoryId} />
 
       {products.length === 0 ? (
         <p className="mt-8 rounded-xl border border-zinc-200 bg-white p-8 text-zinc-700">

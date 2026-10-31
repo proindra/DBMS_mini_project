@@ -16,7 +16,11 @@ type SearchProduct = {
   similarity: number;
 };
 
-export function SemanticProductSearch() {
+export function SemanticProductSearch({
+  categoryId,
+}: {
+  categoryId?: number;
+}) {
   const [query, setQuery] = useState("");
   const [products, setProducts] = useState<SearchProduct[]>([]);
   const [searched, setSearched] = useState(false);
@@ -36,7 +40,7 @@ export function SemanticProductSearch() {
       const response = await fetch("/api/search/semantic", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query, categoryId }),
       });
       const result = (await response.json()) as {
         error?: string;
@@ -114,9 +118,17 @@ export function SemanticProductSearch() {
               key={product.id}
               className="flex flex-col rounded-xl border border-zinc-200 bg-white p-5"
             >
-              <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">
-                {product.categoryName}
-              </p>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">
+                  {product.categoryName}
+                </p>
+                <p
+                  aria-label={`Similarity score: ${Math.round(product.similarity * 100)} percent`}
+                  className="shrink-0 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-800"
+                >
+                  Similarity: {Math.round(product.similarity * 100)}%
+                </p>
+              </div>
               <h3 className="mt-2 text-lg font-semibold text-zinc-950">
                 <Link
                   href={`/products/${product.slug}`}

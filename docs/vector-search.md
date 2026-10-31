@@ -33,7 +33,9 @@ the same model, and runs a parameterized pgvector query. Results include
 active products only and are ordered by cosine distance (`<=>`); the
 reported similarity is `1 - cosine distance`. A PostgreSQL HNSW index using
 `vector_cosine_ops` supports approximate nearest-neighbor retrieval. Search
-returns at most 12 results.
+returns at most 12 results. Each result card displays that similarity score
+as a percentage rounded to the nearest whole number. The catalogue category
+filter also constrains semantic results when a category is selected.
 
 The Phase 5 migration removes prior 3-dimensional placeholder vectors
 because they cannot be converted into valid 384-dimensional model

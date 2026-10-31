@@ -33,6 +33,9 @@ export async function POST(request: Request) {
     );
   }
 
-  const products = await searchProductsByVector(embedding);
+  const products = await searchProductsByVector(
+    embedding,
+    parsed.data.categoryId,
+  );
   return NextResponse.json({ products });
 }

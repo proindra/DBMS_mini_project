@@ -11,6 +11,10 @@ test("semantic search accepts a trimmed description within the query limit", () 
   assert.deepEqual(semanticSearchSchema.parse({ query: "  quiet travel headphones  " }), {
     query: "quiet travel headphones",
   });
+  assert.deepEqual(
+    semanticSearchSchema.parse({ query: "quiet travel headphones", categoryId: 2 }),
+    { query: "quiet travel headphones", categoryId: 2 },
+  );
 });
 
 test("semantic search rejects empty, short, or oversized descriptions", () => {
@@ -18,6 +22,10 @@ test("semantic search rejects empty, short, or oversized descriptions", () => {
   assert.equal(semanticSearchSchema.safeParse({ query: "x" }).success, false);
   assert.equal(
     semanticSearchSchema.safeParse({ query: "a".repeat(301) }).success,
+    false,
+  );
+  assert.equal(
+    semanticSearchSchema.safeParse({ query: "audio", categoryId: -1 }).success,
     false,
   );
 });
