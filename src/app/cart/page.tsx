@@ -18,7 +18,7 @@ async function CartContent() {
   if (user.role !== "CUSTOMER") redirect("/account");
 
   const items = await prisma.cartItem.findMany({
-    where: { userId: user.id },
+    where: { cart: { is: { userId: user.id } } },
     include: { product: true },
     orderBy: { createdAt: "asc" },
   });

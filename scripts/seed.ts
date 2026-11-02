@@ -395,7 +395,7 @@ async function main() {
     for (const user of users) {
       await tx.user.upsert({
         where: { email: user.email },
-        create: user,
+        create: { ...user, cart: { create: {} } },
         update: { name: user.name, role: user.role },
       });
     }

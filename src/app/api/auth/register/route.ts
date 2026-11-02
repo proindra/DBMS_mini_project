@@ -29,6 +29,7 @@ export async function POST(request: Request) {
         email: parsed.data.email,
         passwordHash,
         role: "CUSTOMER",
+        cart: { create: {} },
       },
       select: { id: true, name: true, email: true, role: true },
     });

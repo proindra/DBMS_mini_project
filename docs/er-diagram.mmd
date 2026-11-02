@@ -26,9 +26,15 @@ erDiagram
         boolean active
     }
 
+    Cart {
+        int id PK
+        int userId FK UK
+        datetime createdAt
+    }
+
     CartItem {
         int id PK
-        int userId FK
+        int cartId FK
         int productId FK
         int quantity
         datetime createdAt
@@ -67,7 +73,8 @@ erDiagram
         datetime createdAt
     }
 
-    User ||--o{ CartItem : owns
+    User ||--o| Cart : owns
+    Cart ||--o{ CartItem : contains
     Product ||--o{ CartItem : appears_in
     Category ||--o{ Product : categorizes
     User ||--o{ Order : places

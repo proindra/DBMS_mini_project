@@ -22,7 +22,7 @@ export async function GET() {
   }
 
   const items = await prisma.cartItem.findMany({
-    where: { userId: user.id },
+    where: { cart: { is: { userId: user.id } } },
     include: { product: true },
     orderBy: { createdAt: "asc" },
   });
@@ -56,6 +56,13 @@ export async function POST(request: Request) {
 
   try {
     const item = await prisma.$transaction(async (tx) => {
+      const cart = await tx.cart.upsert({
+        where: { userId: user.id },
+        create: { userId: user.id },
+        update: {},
+        select: { id: true },
+      });
+
       const product = await tx.product.findFirst({
         where: { id: parsed.data.productId, active: true },
         select: { id: true, name: true, stock: true },
@@ -67,7 +74,7 @@ export async function POST(request: Request) {
 
       const existing = await tx.cartItem.findUnique({
         where: {
-          userId_productId: { userId: user.id, productId: product.id },
+          cartId_productId: { cartId: cart.id, productId: product.id },
         },
         select: { quantity: true },
       });
@@ -82,10 +89,10 @@ export async function POST(request: Request) {
 
       const cartItem = await tx.cartItem.upsert({
         where: {
-          userId_productId: { userId: user.id, productId: product.id },
+          cartId_productId: { cartId: cart.id, productId: product.id },
         },
         create: {
-          userId: user.id,
+          cartId: cart.id,
           productId: product.id,
           quantity,
         },

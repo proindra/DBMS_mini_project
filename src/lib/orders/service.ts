@@ -25,8 +25,16 @@ export async function createOrderFromCart(
 ) {
   return prisma.$transaction(
     async (tx) => {
-      const cartItems = await tx.cartItem.findMany({
+      const cart = await tx.cart.findUnique({
         where: { userId },
+        select: { id: true },
+      });
+      if (!cart) {
+        throw new OrderWorkflowError("Your cart is empty.", 400);
+      }
+
+      const cartItems = await tx.cartItem.findMany({
+        where: { cartId: cart.id },
         include: { product: true },
         orderBy: { id: "asc" },
       });
@@ -105,7 +113,7 @@ export async function createOrderFromCart(
         include: { items: true, payment: true },
       });
 
-      await tx.cartItem.deleteMany({ where: { userId } });
+      await tx.cartItem.deleteMany({ where: { cartId: cart.id } });
       return order;
     },
     { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },

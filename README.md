@@ -166,11 +166,35 @@ For the browser workflow, database/view checks, and safe SQL examples, follow
 [`docs/testing.md`](./docs/testing.md). To stop the local database, run
 `docker compose down`; add `-v` only if you intend to delete its stored data.
 
-The project demonstrates serializable checkout transactions, relational and
-vector indexes, an `AdminSalesSummary` PostgreSQL view, and pgvector cosine
-search. Safe SQL examples for the database assignment are in
-[`docs/important-queries.sql`](./docs/important-queries.sql); database
-verification steps are in [`docs/testing.md`](./docs/testing.md).
+## Database assignment coverage
+
+The database model includes `User`, `Category`, `Product`, `Cart`,
+`CartItem`, `Order`, and `OrderItem` (as well as `Payment` and
+`ProductEmbedding` for application features). The ER diagram and its
+relational mapping are documented in
+[`docs/er-diagram.mmd`](./docs/er-diagram.mmd) and
+[`docs/database-design.md`](./docs/database-design.md). The consolidated
+PostgreSQL baseline migration creates the tables, foreign-key and check
+constraints, unique constraints, indexes, and database routines.
+
+The project also demonstrates:
+
+- DDL and DML, including `CREATE`, `ALTER`, `INSERT`, `UPDATE`, and `DELETE`.
+- Simple product, customer, and order retrieval queries.
+- Nested queries to find customers who placed orders.
+- A correlated query to find products priced above their category average.
+- The `AdminUpdateOrderStatus` stored procedure for validated administrative
+  status changes, including stock restoration when an order is cancelled.
+- The `CalculateOrderTotal` function for totals based on order-item snapshots.
+- Product and order audit triggers that record row changes in `AuditLog`.
+- Serializable checkout transactions, the `AdminSalesSummary` view, and
+  pgvector cosine search.
+
+Safe, self-contained query examples are in
+[`docs/important-queries.sql`](./docs/important-queries.sql). The stored
+procedure, function, audit table, and triggers are installed by the PostgreSQL
+baseline migration. Database verification steps are in
+[`docs/testing.md`](./docs/testing.md).
 
 ## Architecture
 
@@ -197,7 +221,7 @@ up repeated catalogue and semantic-search reads.
 ├── docs/                 # Requirements, database design, SQL examples, tests
 ├── prisma/
 │   ├── schema.prisma     # Relational schema and models
-│   └── migrations/       # PostgreSQL and pgvector migrations
+│   └── migrations/       # Consolidated PostgreSQL + pgvector baseline
 ├── public/               # Static assets
 ├── scripts/              # Seed data and product embedding indexing
 ├── src/
@@ -210,8 +234,6 @@ up repeated catalogue and semantic-search reads.
 └── package.json          # Scripts and project dependencies
 ```
 
-Project scope and implementation status are tracked in
-[`IMPLEMENTATION.md`](./IMPLEMENTATION.md).
 The schema overview and requirements are in
 [`docs/er-diagram.mmd`](./docs/er-diagram.mmd) and
 [`docs/requirements.md`](./docs/requirements.md).

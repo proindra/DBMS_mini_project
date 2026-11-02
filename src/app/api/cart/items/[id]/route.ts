@@ -41,7 +41,7 @@ export async function PATCH(request: Request, context: RouteParams) {
   }
 
   const item = await prisma.cartItem.findFirst({
-    where: { id, userId: user.id },
+    where: { id, cart: { is: { userId: user.id } } },
     include: { product: true },
   });
   if (!item) {
@@ -59,7 +59,7 @@ export async function PATCH(request: Request, context: RouteParams) {
 
   try {
     const updated = await prisma.cartItem.updateMany({
-      where: { id, userId: user.id },
+      where: { id, cartId: item.cartId },
       data: { quantity: parsed.data.quantity },
     });
     if (updated.count !== 1) {
@@ -97,8 +97,16 @@ export async function DELETE(_request: Request, context: RouteParams) {
     return NextResponse.json({ error: "Invalid cart item id." }, { status: 400 });
   }
 
+  const cart = await prisma.cart.findUnique({
+    where: { userId: user.id },
+    select: { id: true },
+  });
+  if (!cart) {
+    return NextResponse.json({ error: "Cart item not found." }, { status: 404 });
+  }
+
   const deleted = await prisma.cartItem.deleteMany({
-    where: { id, userId: user.id },
+    where: { id, cartId: cart.id },
   });
   if (deleted.count !== 1) {
     return NextResponse.json({ error: "Cart item not found." }, { status: 404 });
