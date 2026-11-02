@@ -1,0 +1,13 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "StoreIQ local PostgreSQL",
+      "Group": "Servers",
+      "Host": "db",
+      "Port": 5432,
+      "MaintenanceDB": "ecommerce_order_management",
+      "Username": "postgres",
+      "SSLMode": "prefer"
+    }
+  }
+}

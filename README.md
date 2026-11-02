@@ -52,9 +52,28 @@ Open [http://localhost:3000](http://localhost:3000).
 | Service | Runs with | Port / URL | Purpose and data |
 | --- | --- | --- | --- |
 | PostgreSQL 16 + pgvector | Docker | `5432` | Primary database; data persists in the `postgres_data` Docker volume. |
+| pgAdmin | Docker | [http://localhost:5050](http://localhost:5050) | PostgreSQL web GUI; sign in with `admin@local.dev` / `admin` and connect to the preconfigured `StoreIQ local PostgreSQL` server using `postgres` as the database password. |
 | Redis Stack | Docker | `6379` | In-memory cache and temporary data; cache is disposable. |
 | RedisInsight | Included with Redis Stack | [http://localhost:8001](http://localhost:8001) | Browser GUI for viewing Redis keys and cache data. |
 | Prisma Studio | `npm run db:studio` | [http://localhost:51212](http://localhost:51212) | Browser GUI for viewing and editing PostgreSQL records; the port may vary. |
+
+pgAdmin is available after `docker compose up -d`. Its local-development
+credentials and database connection are configured in `docker-compose.yml` and
+[`pgadmin/servers.json`](./pgadmin/servers.json). The pgAdmin port is bound to
+localhost, and its settings persist in the `pgadmin_data` Docker volume. Do not
+use the sample login credentials outside local development.
+
+### Open pgAdmin
+
+1. Start the local services with `docker compose up -d`.
+2. Open [http://localhost:5050](http://localhost:5050).
+3. Sign in to pgAdmin with **Email Address / Username** `admin@local.dev`
+   and **Password** `admin`.
+4. In the browser tree, open **Servers → StoreIQ local PostgreSQL**. If asked
+   for the database password, enter `postgres`.
+
+The pgAdmin website password (`admin`) is separate from the PostgreSQL server
+password (`postgres`). Both are local-development credentials.
 
 The checked-in `.env.example` contains local-only values. For deployment,
 provide a strong unique `AUTH_SECRET`, a production `DATABASE_URL`, and a
