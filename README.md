@@ -72,6 +72,23 @@ use the sample login credentials outside local development.
 4. In the browser tree, open **Servers → StoreIQ local PostgreSQL**. If asked
    for the database password, enter `postgres`.
 
+If pgAdmin asks you to register a server manually, use these connection
+settings:
+
+| Field | Value |
+| --- | --- |
+| Server name | `StoreIQ local PostgreSQL` |
+| Host name/address | `db` |
+| Port | `5432` |
+| Maintenance database | `ecommerce_order_management` |
+| Username | `postgres` |
+| Password | `postgres` |
+| Role and Service | Leave blank |
+
+Use `db` as the host when connecting from the pgAdmin container in this
+project's Docker Compose network. If pgAdmin is installed directly on your
+computer instead, use `localhost` as the host.
+
 The pgAdmin website password (`admin`) is separate from the PostgreSQL server
 password (`postgres`). Both are local-development credentials.
 
