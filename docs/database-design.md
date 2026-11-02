@@ -68,7 +68,10 @@ baseline migration.
 
 ## Entity relationships
 
-The Mermaid ER diagram is maintained in [`er-diagram.mmd`](./er-diagram.mmd).
+The Chen-style ER diagram is maintained in
+[`chen-er-diagram.md`](./chen-er-diagram.md), and the Crow's Foot relational
+schema diagram is in
+[`relationalschemadiagram.mmd`](./relationalschemadiagram.mmd).
 Products belong to categories; users own carts and orders; orders contain
 purchase-time item snapshots and an optional payment; products may have one
 embedding. Foreign keys preserve order history and remove a product's

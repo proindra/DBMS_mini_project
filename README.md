@@ -187,14 +187,14 @@ For the browser workflow, database/view checks, and safe SQL examples, follow
 
 The database model includes `User`, `Category`, `Product`, `Cart`,
 `CartItem`, `Order`, and `OrderItem` (as well as `Payment` and
-`ProductEmbedding` for application features). The ER diagram and its
-relational mapping are documented in
-[`docs/er-diagram.mmd`](./docs/er-diagram.mmd) and
-[`docs/database-design.md`](./docs/database-design.md). The consolidated
-PostgreSQL baseline migration creates the tables, foreign-key and check
-constraints, unique constraints, indexes, and database routines.
-For a standalone ER diagram suitable for presenting or printing, see
-[`docs/er-model.md`](./docs/er-model.md).
+`ProductEmbedding` for application features). The Chen-style ER diagram and
+Crow's Foot relational schema diagram are available in
+[`docs/chen-er-diagram.md`](./docs/chen-er-diagram.md) and
+[`docs/relationalschemadiagram.mmd`](./docs/relationalschemadiagram.mmd); relational
+mapping details are in [`docs/database-design.md`](./docs/database-design.md).
+The consolidated PostgreSQL baseline migration creates the tables,
+foreign-key and check constraints, unique constraints, indexes, and database
+routines.
 
 The project also demonstrates:
 
@@ -267,5 +267,5 @@ up repeated catalogue and semantic-search reads.
 ```
 
 The schema overview and requirements are in
-[`docs/er-diagram.mmd`](./docs/er-diagram.mmd) and
+[`docs/relationalschemadiagram.mmd`](./docs/relationalschemadiagram.mmd) and
 [`docs/requirements.md`](./docs/requirements.md).

@@ -1,4 +1,4 @@
-# StoreIQ Entity-Relationship Model
+# StoreIQ Chen-Style ER Diagram
 
 This Chen-style ER diagram uses rectangles for entities, ovals for attributes,
 and diamonds for relationships. `CartItem` and `OrderItem` are associative

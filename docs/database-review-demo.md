@@ -13,7 +13,10 @@
 > orders to products while preserving the product name and price at purchase
 > time.
 
-The ER diagram is in [`er-diagram.mmd`](./er-diagram.mmd), and the relational
+The Chen-style ER diagram is in
+[`chen-er-diagram.md`](./chen-er-diagram.md), and the Crow's Foot relational
+schema diagram is in
+[`relationalschemadiagram.mmd`](./relationalschemadiagram.mmd). The relational
 mapping is documented in [`database-design.md`](./database-design.md).
 
 ## DDL and DML demo
