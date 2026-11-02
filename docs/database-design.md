@@ -52,6 +52,8 @@ This project uses PostgreSQL with Prisma as the ORM and pgvector for semantic pr
   procedure updates stock itself; no stock trigger duplicates checkout logic.
 - **Views:** `AdminSalesSummary` reports total order count and sales excluding
   cancelled orders. The admin dashboard and summary API read this view.
+- **CTEs:** the admin dashboard uses a `WITH` clause to summarize order count
+  and non-cancelled sales for each customer.
 - **Indexes:** B-tree indexes support category and active-product browsing,
   user cart/order lookups, and order-item relationships. An HNSW index with
   `vector_cosine_ops` accelerates product-vector similarity retrieval.
@@ -60,8 +62,9 @@ This project uses PostgreSQL with Prisma as the ORM and pgvector for semantic pr
 
 The relevant indexes are defined in the Prisma schema and the SQL migrations.
 `docs/important-queries.sql` contains isolated temporary-table examples for
-DDL, DML, simple, nested, and correlated queries; the stored procedure,
-function, and audit triggers are installed by the Phase 7 migration.
+DDL and DML, plus simple, nested, correlated, and CTE queries. The stored
+procedure, function, and audit triggers are installed by the consolidated
+baseline migration.
 
 ## Entity relationships
 
@@ -76,4 +79,4 @@ derived embedding when that product is deleted.
 - Product prices and order amounts are denominated in Indian rupees (INR) and
   stored as `Decimal(10,2)` for consistent precision.
 - Orders keep immutable snapshots of product name and price at purchase time.
-- Cart items enforce one row per user-product pair.
+- Cart items enforce one row per cart-product pair.

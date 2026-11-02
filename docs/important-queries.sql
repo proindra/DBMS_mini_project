@@ -160,7 +160,28 @@ COMMIT;
 SELECT "orderCount", "salesTotal"
 FROM "AdminSalesSummary";
 
--- Phase 7 routines operate on the real application tables:
+-- CTE: summarize order counts and non-cancelled sales per customer.
+WITH customer_order_summary AS (
+    SELECT
+        o."userId",
+        COUNT(*) AS "orderCount",
+        COALESCE(
+            SUM(o."total") FILTER (WHERE o."status" <> 'CANCELLED'),
+            0
+        ) AS "salesTotal"
+    FROM "Order" o
+    GROUP BY o."userId"
+)
+SELECT
+    u."name",
+    u."email",
+    summary."orderCount",
+    summary."salesTotal"
+FROM customer_order_summary summary
+JOIN "User" u ON u."id" = summary."userId"
+ORDER BY summary."salesTotal" DESC, u."name";
+
+-- The stored procedure and function operate on the real application tables:
 -- SELECT "CalculateOrderTotal"(1);
 -- CALL "AdminUpdateOrderStatus"(1, 'PROCESSING');
 -- The procedure enforces the application status transitions. Cancelling an

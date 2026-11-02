@@ -200,6 +200,8 @@ The project also demonstrates:
 - Simple product, customer, and order retrieval queries.
 - Nested queries to find customers who placed orders.
 - A correlated query to find products priced above their category average.
+- A PostgreSQL CTE used by the admin dashboard to summarize each customer's
+  order count and non-cancelled sales.
 - The `AdminUpdateOrderStatus` stored procedure for validated administrative
   status changes, including stock restoration when an order is cancelled.
 - The `CalculateOrderTotal` function for totals based on order-item snapshots.
@@ -207,11 +209,20 @@ The project also demonstrates:
 - Serializable checkout transactions, the `AdminSalesSummary` view, and
   pgvector cosine search.
 
+The CTE is an application query executed by the admin dashboard when it loads;
+it is not a persistent database object and therefore does not belong in a
+migration. Its implementation is in
+[`src/lib/admin/summary.ts`](./src/lib/admin/summary.ts). In contrast, the
+stored procedure, function, audit table, and triggers are persistent
+PostgreSQL objects, so the baseline migration creates them when the database
+is set up.
+
 Safe, self-contained query examples are in
 [`docs/important-queries.sql`](./docs/important-queries.sql). The stored
 procedure, function, audit table, and triggers are installed by the PostgreSQL
 baseline migration. Database verification steps are in
 [`docs/testing.md`](./docs/testing.md).
+
 For a copy-ready pgAdmin walkthrough to use during a project review, see
 [`docs/database-review-demo.md`](./docs/database-review-demo.md).
 

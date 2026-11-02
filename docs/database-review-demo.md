@@ -120,6 +120,34 @@ WHERE u."id" IN (
 ORDER BY u."name";
 ```
 
+## CTE: summarize each customer's orders
+
+> The admin dashboard uses this common table expression (CTE), introduced
+> with `WITH`, to calculate order counts and sales per customer. This query can
+> also be run in pgAdmin to demonstrate the same database operation directly.
+
+```sql
+WITH customer_order_summary AS (
+    SELECT
+        o."userId",
+        COUNT(*) AS "orderCount",
+        COALESCE(
+            SUM(o."total") FILTER (WHERE o."status" <> 'CANCELLED'),
+            0
+        ) AS "salesTotal"
+    FROM "Order" o
+    GROUP BY o."userId"
+)
+SELECT
+    u."name",
+    u."email",
+    summary."orderCount",
+    summary."salesTotal"
+FROM customer_order_summary summary
+JOIN "User" u ON u."id" = summary."userId"
+ORDER BY summary."salesTotal" DESC, u."name";
+```
+
 ## Correlated query: products above their category average
 
 ```sql
