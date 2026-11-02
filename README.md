@@ -212,6 +212,8 @@ Safe, self-contained query examples are in
 procedure, function, audit table, and triggers are installed by the PostgreSQL
 baseline migration. Database verification steps are in
 [`docs/testing.md`](./docs/testing.md).
+For a copy-ready pgAdmin walkthrough to use during a project review, see
+[`docs/database-review-demo.md`](./docs/database-review-demo.md).
 
 ## Architecture
 
