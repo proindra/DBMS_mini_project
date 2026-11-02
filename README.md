@@ -193,6 +193,8 @@ relational mapping are documented in
 [`docs/database-design.md`](./docs/database-design.md). The consolidated
 PostgreSQL baseline migration creates the tables, foreign-key and check
 constraints, unique constraints, indexes, and database routines.
+For a standalone ER diagram suitable for presenting or printing, see
+[`docs/er-model.md`](./docs/er-model.md).
 
 The project also demonstrates:
 
