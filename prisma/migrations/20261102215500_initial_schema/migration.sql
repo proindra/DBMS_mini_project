@@ -1,17 +1,24 @@
 -- CreateSchema
+-- Enable pgvector so product descriptions can be stored as 384-dimensional
+-- embeddings and searched by vector similarity.
 CREATE EXTENSION IF NOT EXISTS vector;
 
+-- Prisma's models are created in PostgreSQL's standard application schema.
 CREATE SCHEMA IF NOT EXISTS "public";
 
 -- CreateEnum
+-- Roles control which application features a user may access.
 CREATE TYPE "Role" AS ENUM ('CUSTOMER', 'ADMIN');
 
 -- CreateEnum
+-- Allowed stages in an order's lifecycle.
 CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED');
 
 -- CreateEnum
+-- Allowed payment outcomes for an order.
 CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'PAID', 'FAILED', 'REFUNDED');
 
+-- Core account and catalogue tables. SERIAL columns generate integer IDs.
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
@@ -25,6 +32,7 @@ CREATE TABLE "User" (
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
+-- Product categories are referenced by Product.categoryId.
 -- CreateTable
 CREATE TABLE "Category" (
     "id" SERIAL NOT NULL,
@@ -36,6 +44,8 @@ CREATE TABLE "Category" (
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
 
+-- Products hold the current price and stock; order items separately preserve
+-- the name and price that applied when an order was placed.
 -- CreateTable
 CREATE TABLE "Product" (
     "id" SERIAL NOT NULL,
@@ -53,6 +63,7 @@ CREATE TABLE "Product" (
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
 
+-- A cart belongs to one user; CartItem rows contain the products and quantities.
 -- CreateTable
 CREATE TABLE "Cart" (
     "id" SERIAL NOT NULL,
@@ -75,6 +86,8 @@ CREATE TABLE "CartItem" (
     CONSTRAINT "CartItem_pkey" PRIMARY KEY ("id")
 );
 
+-- An order is the purchase header. Its items and optional payment are stored
+-- separately so each can be related to the order by a foreign key.
 -- CreateTable
 CREATE TABLE "Order" (
     "id" SERIAL NOT NULL,
@@ -87,6 +100,8 @@ CREATE TABLE "Order" (
     CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
 );
 
+-- OrderItem is a historical snapshot: productName and unitPrice are retained
+-- even if the corresponding product is later renamed or repriced.
 -- CreateTable
 CREATE TABLE "OrderItem" (
     "id" SERIAL NOT NULL,
@@ -100,6 +115,7 @@ CREATE TABLE "OrderItem" (
     CONSTRAINT "OrderItem_pkey" PRIMARY KEY ("id")
 );
 
+-- Each order can have at most one payment record (enforced by a unique index).
 -- CreateTable
 CREATE TABLE "Payment" (
     "id" SERIAL NOT NULL,
@@ -111,6 +127,7 @@ CREATE TABLE "Payment" (
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
 );
 
+-- Stores one vector embedding per product for semantic similarity search.
 -- CreateTable
 CREATE TABLE "ProductEmbedding" (
     "id" SERIAL NOT NULL,
@@ -122,6 +139,7 @@ CREATE TABLE "ProductEmbedding" (
     CONSTRAINT "ProductEmbedding_pkey" PRIMARY KEY ("id")
 );
 
+-- Keeps before/after row data for changes to audited tables.
 -- CreateTable
 CREATE TABLE "AuditLog" (
     "id" SERIAL NOT NULL,
@@ -135,6 +153,7 @@ CREATE TABLE "AuditLog" (
     CONSTRAINT "AuditLog_pkey" PRIMARY KEY ("id")
 );
 
+-- Unique indexes enforce business identifiers and prevent duplicate records.
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -177,9 +196,14 @@ CREATE UNIQUE INDEX "Payment_orderId_key" ON "Payment"("orderId");
 -- CreateIndex
 CREATE UNIQUE INDEX "ProductEmbedding_productId_key" ON "ProductEmbedding"("productId");
 
+-- Supports finding an entity's audit history in chronological order.
 -- CreateIndex
 CREATE INDEX "AuditLog_entityType_entityId_createdAt_idx" ON "AuditLog"("entityType", "entityId", "createdAt");
 
+-- Foreign keys enforce valid relationships between rows.
+-- Deleting a user removes their cart and cart items, but does not remove orders.
+-- RESTRICT protects referenced products and orders from accidental deletion;
+-- deleting a product removes its embedding because it cannot exist on its own.
 -- AddForeignKey
 ALTER TABLE "Product" ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -207,8 +231,9 @@ ALTER TABLE "Payment" ADD CONSTRAINT "Payment_orderId_fkey" FOREIGN KEY ("orderI
 -- AddForeignKey
 ALTER TABLE "ProductEmbedding" ADD CONSTRAINT "ProductEmbedding_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- Check constraints maintained in SQL because Prisma schema syntax does not
--- currently represent PostgreSQL CHECK constraints.
+-- CHECK constraints reject invalid values even when data is written outside
+-- the application. They are defined in SQL because Prisma does not represent
+-- these PostgreSQL checks in the schema model.
 ALTER TABLE "Product"
   ADD CONSTRAINT "Product_price_nonnegative_check" CHECK ("price" >= 0),
   ADD CONSTRAINT "Product_stock_nonnegative_check" CHECK ("stock" >= 0);
@@ -226,6 +251,8 @@ ALTER TABLE "OrderItem"
 ALTER TABLE "Payment"
   ADD CONSTRAINT "Payment_amount_nonnegative_check" CHECK ("amount" >= 0);
 
+-- Dashboard summary: orderCount includes every order, while salesTotal excludes
+-- cancelled orders. COALESCE returns zero when there are no qualifying orders.
 CREATE OR REPLACE VIEW "AdminSalesSummary" AS
 SELECT
     COUNT(*)::INTEGER AS "orderCount",
@@ -235,10 +262,14 @@ SELECT
     )::TEXT AS "salesTotal"
 FROM "Order";
 
+-- HNSW is a vector index that accelerates approximate nearest-neighbour
+-- searches using cosine distance.
 CREATE INDEX "ProductEmbedding_embedding_cosine_idx"
 ON "ProductEmbedding"
 USING hnsw ("embedding" vector_cosine_ops);
 
+-- Recalculates an order's total from its stored line-item prices and quantities.
+-- The result is zero if the order has no items.
 CREATE OR REPLACE FUNCTION "CalculateOrderTotal"(p_order_id INTEGER)
 RETURNS NUMERIC(10, 2)
 LANGUAGE SQL
@@ -249,6 +280,14 @@ AS $$
     WHERE "orderId" = p_order_id;
 $$;
 
+-- Applies an allowed order-status transition inside the caller's transaction.
+-- FOR UPDATE locks the order row so concurrent status changes cannot both
+-- proceed based on the same old status.
+-- This procedure is for the admin order-management workflow; customers do not
+-- cancel orders through the application's current API.
+-- Cancellation is a compensating update, not a rollback of the original
+-- checkout: it restores stock and marks a still-pending payment as failed.
+-- It does not issue a refund if a payment has already been paid.
 CREATE OR REPLACE PROCEDURE "AdminUpdateOrderStatus"(
     p_order_id INTEGER,
     p_new_status "OrderStatus"
@@ -280,6 +319,8 @@ BEGIN
     END IF;
 
     IF p_new_status = 'CANCELLED' THEN
+        -- Add the ordered quantities back to inventory; checkout itself remains
+        -- recorded as an order and is not undone.
         UPDATE "Product" p
         SET "stock" = p."stock" + cancelled_items."quantity"
         FROM (
@@ -296,12 +337,19 @@ BEGIN
           AND "status" = 'PENDING';
     END IF;
 
+    -- If a prior validation raised an exception, PostgreSQL rolls back these
+    -- updates together with the rest of the caller's transaction.
     UPDATE "Order"
     SET "status" = p_new_status
     WHERE "id" = p_order_id;
 END;
 $$;
 
+-- Shared row-level audit trigger function. It stores the complete row as JSONB:
+-- INSERT records NEW, UPDATE records both OLD and NEW, and DELETE records OLD.
+-- The trigger's action and table name come from PostgreSQL's TG_OP and
+-- TG_TABLE_NAME variables. The audit insert is part of the same transaction as
+-- the data change, so it is rolled back if that change fails.
 CREATE OR REPLACE FUNCTION "AuditRowChange"()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -333,11 +381,13 @@ BEGIN
 END;
 $$;
 
+-- Record every inserted, updated, or deleted product after each row changes.
 CREATE TRIGGER "Product_audit_changes"
 AFTER INSERT OR UPDATE OR DELETE ON "Product"
 FOR EACH ROW
 EXECUTE FUNCTION "AuditRowChange"();
 
+-- Record every inserted, updated, or deleted order after each row changes.
 CREATE TRIGGER "Order_audit_changes"
 AFTER INSERT OR UPDATE OR DELETE ON "Order"
 FOR EACH ROW
