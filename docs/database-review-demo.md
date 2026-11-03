@@ -129,6 +129,117 @@ ORDER BY u."name";
 > with `WITH`, to calculate order counts and sales per customer. This query can
 > also be run in pgAdmin to demonstrate the same database operation directly.
 
+First, make sure the database has the sample users and products from the project
+seed (`npm run db:seed`). Run this block in pgAdmin to add three persistent
+demo orders for the seeded customers Alice and Charlie. It is safe to rerun:
+it uses fixed timestamps to avoid adding the same demo order twice. These are
+reporting examples inserted directly into the database; they do not represent
+checkout, so product stock is not changed.
+
+```sql
+BEGIN;
+
+DO $$
+DECLARE
+    v_alice_id INTEGER;
+    v_charlie_id INTEGER;
+    v_nimbus_id INTEGER;
+    v_echo_id INTEGER;
+    v_order_id INTEGER;
+BEGIN
+    SELECT "id" INTO v_alice_id
+    FROM "User"
+    WHERE "email" = 'alice@example.com';
+
+    SELECT "id" INTO v_charlie_id
+    FROM "User"
+    WHERE "email" = 'charlie@example.com';
+
+    SELECT "id" INTO v_nimbus_id
+    FROM "Product"
+    WHERE "slug" = 'nimbus-wireless-headphones';
+
+    SELECT "id" INTO v_echo_id
+    FROM "Product"
+    WHERE "slug" = 'echo-mini-speaker';
+
+    IF v_alice_id IS NULL OR v_charlie_id IS NULL
+       OR v_nimbus_id IS NULL OR v_echo_id IS NULL THEN
+        RAISE EXCEPTION 'Run the project seed first; demo users or products are missing.';
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM "Order"
+        WHERE "userId" = v_alice_id
+          AND "createdAt" = TIMESTAMP '2026-11-03 09:00:00'
+    ) THEN
+        INSERT INTO "Order" ("userId", "status", "total", "createdAt", "updatedAt")
+        VALUES (
+            v_alice_id, 'PENDING', 228.74,
+            TIMESTAMP '2026-11-03 09:00:00', TIMESTAMP '2026-11-03 09:00:00'
+        )
+        RETURNING "id" INTO v_order_id;
+
+        INSERT INTO "OrderItem"
+            ("orderId", "productId", "productName", "unitPrice", "quantity")
+        VALUES
+            (v_order_id, v_nimbus_id, 'Nimbus Wireless Headphones', 179.99, 1),
+            (v_order_id, v_echo_id, 'Echo Mini Speaker', 48.75, 1);
+
+        INSERT INTO "Payment" ("orderId", "amount", "status")
+        VALUES (v_order_id, 228.74, 'PENDING');
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM "Order"
+        WHERE "userId" = v_alice_id
+          AND "createdAt" = TIMESTAMP '2026-11-03 09:01:00'
+    ) THEN
+        INSERT INTO "Order" ("userId", "status", "total", "createdAt", "updatedAt")
+        VALUES (
+            v_alice_id, 'CANCELLED', 48.75,
+            TIMESTAMP '2026-11-03 09:01:00', TIMESTAMP '2026-11-03 09:01:00'
+        )
+        RETURNING "id" INTO v_order_id;
+
+        INSERT INTO "OrderItem"
+            ("orderId", "productId", "productName", "unitPrice", "quantity")
+        VALUES (v_order_id, v_echo_id, 'Echo Mini Speaker', 48.75, 1);
+
+        INSERT INTO "Payment" ("orderId", "amount", "status")
+        VALUES (v_order_id, 48.75, 'FAILED');
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM "Order"
+        WHERE "userId" = v_charlie_id
+          AND "createdAt" = TIMESTAMP '2026-11-03 09:02:00'
+    ) THEN
+        INSERT INTO "Order" ("userId", "status", "total", "createdAt", "updatedAt")
+        VALUES (
+            v_charlie_id, 'SHIPPED', 359.98,
+            TIMESTAMP '2026-11-03 09:02:00', TIMESTAMP '2026-11-03 09:02:00'
+        )
+        RETURNING "id" INTO v_order_id;
+
+        INSERT INTO "OrderItem"
+            ("orderId", "productId", "productName", "unitPrice", "quantity")
+        VALUES (v_order_id, v_nimbus_id, 'Nimbus Wireless Headphones', 179.99, 2);
+
+        INSERT INTO "Payment" ("orderId", "amount", "status")
+        VALUES (v_order_id, 359.98, 'PAID');
+    END IF;
+END;
+$$;
+
+COMMIT;
+```
+
+Next, run the CTE against those inserted database rows. It counts cancelled
+orders but excludes their totals from sales, just like the admin dashboard.
+The fixed timestamps isolate these three demo orders from any other orders
+Alice or Charlie may have.
+
 ```sql
 WITH customer_order_summary AS (
     SELECT
@@ -139,6 +250,11 @@ WITH customer_order_summary AS (
             0
         ) AS "salesTotal"
     FROM "Order" o
+    WHERE o."createdAt" IN (
+        TIMESTAMP '2026-11-03 09:00:00',
+        TIMESTAMP '2026-11-03 09:01:00',
+        TIMESTAMP '2026-11-03 09:02:00'
+    )
     GROUP BY o."userId"
 )
 SELECT
@@ -150,6 +266,9 @@ FROM customer_order_summary summary
 JOIN "User" u ON u."id" = summary."userId"
 ORDER BY summary."salesTotal" DESC, u."name";
 ```
+
+Expected result: Charlie has 1 order and 359.98 in sales; Alice has 2 orders
+and 228.74 in sales because her cancelled 48.75 order is excluded.
 
 ## Correlated query: products above their category average
 
