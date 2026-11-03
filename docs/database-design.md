@@ -43,8 +43,11 @@ This project uses PostgreSQL with Prisma as the ORM and pgvector for semantic pr
   decrement stock, create the order and payment, save item snapshots, and
   clear the cart atomically.
 - **Stored procedure:** `AdminUpdateOrderStatus` applies the same allowed
-  status transitions as the admin workflow. Cancelling restores ordered stock
-  and marks a pending payment failed.
+  status transitions as the admin workflow. Cancellation is an admin action;
+  customers cannot cancel orders through the current API. It compensates for
+  checkout rather than rolling it back: ordered quantities are added back to
+  stock, and a pending payment is marked failed. A payment that is already paid
+  is not automatically refunded.
 - **Function:** `CalculateOrderTotal(orderId)` calculates an order total from
   its immutable order-item snapshots.
 - **Trigger and audit log:** row-level triggers record inserts, updates, and
