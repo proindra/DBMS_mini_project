@@ -208,6 +208,30 @@ LIMIT 5;
 ROLLBACK;
 ```
 
+To inspect **persisted** product history, run this separately in pgAdmin. It
+shows the old and new product row as JSON. Add a product ID condition to see
+one product's history. The database trigger records changes automatically,
+but the current application does not provide an admin page or API for viewing
+these audit records.
+
+```sql
+SELECT
+    "entityId" AS "productId",
+    "action",
+    "oldData",
+    "newData",
+    "createdAt"
+FROM "AuditLog"
+WHERE "entityType" = 'Product'
+ORDER BY "createdAt" DESC;
+```
+
+For just one product, add this condition before `ORDER BY`:
+
+```sql
+  AND "entityId" = 1
+```
+
 ## Stored procedure: demonstrate an order status change safely
 
 This finds one order in a status that has a valid next transition, calls the
